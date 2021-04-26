@@ -8,11 +8,11 @@
 
 class Floor{
 public:
-    Floor( int width, int height, SDL_Renderer *renderer );
+    Floor( int tileDimesion, SDL_Renderer *renderer );
     ~Floor();
     void render( int nOfTiles, int dimensionOfTiles );
 private:
-    int width, height;
+    int tileDimesion;
     SDL_Rect *destination;
     SDL_Renderer *renderer;
     SDL_Rect *tiles[4];

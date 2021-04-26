@@ -16,7 +16,7 @@ Window::Window::Window( const char *title, int width, int height ){
 
     SDL_SetRenderDrawColor( renderer, 120, 120, 120, 255 );
 
-    floor = new Floor( width, height, renderer );
+    floor = new Floor( 50, renderer );
 
 }
 
@@ -44,7 +44,7 @@ void Window::Window::run(){
 
 void Window::Window::render(){
     SDL_RenderClear( renderer );
-    floor->render( 0, 50 );
+    floor->render( width, height );
     SDL_RenderPresent( renderer );
 }
 

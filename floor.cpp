@@ -1,8 +1,7 @@
 #include "floor.h"
 
-Floor::Floor( int width, int height, SDL_Renderer *renderer ){
-    this->width = width;
-    this->height = height;
+Floor::Floor( int tileDimesion, SDL_Renderer *renderer ){
+    this->tileDimesion = tileDimesion;
     this->renderer = renderer;
     destination = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
     for( int i = 0; i < 4; i++ ){
@@ -32,12 +31,12 @@ Floor::Floor( int width, int height, SDL_Renderer *renderer ){
     texture = new Texture( "img/floor.png", renderer );
 }
 
-void Floor::render( int nOfTiless, int dimensionOfTiles ){
-    destination->w = dimensionOfTiles;
-    destination->h = dimensionOfTiles;
-    for( int i = 0; i < width; i += dimensionOfTiles ){
+void Floor::render( int width, int height ){
+    destination->w = tileDimesion;
+    destination->h = tileDimesion;
+    for( int i = 0; i < width; i += tileDimesion ){
         destination->x = i;
-        for( int j = 0; j < height; j += dimensionOfTiles ){
+        for( int j = 0; j < height; j += tileDimesion ){
             destination->y = j;
             texture->render( renderer, tiles[1], destination );
         }
