@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <exception>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
+#include "floor.h"
 
 #ifndef WINDOW
 #define WINDOW
@@ -19,6 +22,7 @@ namespace Window{
         SDL_Renderer *renderer;
         SDL_Texture *texture;
         SDL_Rect *source, *destination;
+        Floor *floor;
 
         void render();
         bool eventManager(SDL_Event e);

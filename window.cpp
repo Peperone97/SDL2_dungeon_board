@@ -9,12 +9,17 @@ Window::Window::Window( const char *title, int width, int height ){
     window = SDL_CreateWindow( title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_HIDDEN );    
     if( window == NULL ){throw "Can't init SDL window";}
 
+    if( IMG_Init( IMG_INIT_PNG ) < 0 ){throw "Can't init png";}
+
     renderer = SDL_CreateRenderer( window, -1, 0 );
     if( renderer == NULL ){throw "Can't init SDL renderer";}
 
-    SDL_Surface *surf = SDL_LoadBMP( "bmp/H30_heavyarmor.bmp" );
-    if( surf == 0 ){throw "Can't load bmp";}
-    texture = SDL_CreateTextureFromSurface( renderer, surf );
+    floor = new Floor( width, height, renderer );
+
+    //SDL_Surface *surf = SDL_LoadBMP( "bmp/H30_heavyarmor.bmp" );
+    /*SDL_Surface *surf = IMG_Load( "img/floor.png" );
+    if( surf == 0 ){throw IMG_GetError();}
+    texture = SDL_CreateTextureFromSurface( renderer, surf );NULL
     if( texture == 0 ){throw "Creating texture error";}
     SDL_FreeSurface( surf );
 
@@ -23,13 +28,17 @@ Window::Window::Window( const char *title, int width, int height ){
     
     SDL_QueryTexture( texture, NULL, NULL, &source->w, &source->h );
     
-    source->x = destination->x = 0;
-    source->y = destination->y = 0;
-    
-    source->w = 30;
-    //source->h = 50;
-    destination->w = source->w;
-    destination->h = source->h;
+    destination->x = 0;
+    destination->y = 0;
+
+    //source->x = 33;
+    source->x = 161;
+    source->y = 41;
+    source->w = 38;
+    source->h = 38;
+
+    destination->w = 200;
+    destination->h = 200;*/
 
 }
 
@@ -57,11 +66,13 @@ void Window::Window::run(){
 
 void Window::Window::render(){
     SDL_RenderClear( renderer );
-    SDL_RenderCopy( renderer, texture, source, destination );
+    floor->render( 0, 50 );
+    //SDL_RenderCopy( renderer, texture, source, destination );
     SDL_RenderPresent( renderer );
 }
 
 void Window::Window::close(){
+    delete floor;
     free( source );
     free( destination);
     SDL_DestroyTexture( texture );
