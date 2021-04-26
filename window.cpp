@@ -14,31 +14,9 @@ Window::Window::Window( const char *title, int width, int height ){
     renderer = SDL_CreateRenderer( window, -1, 0 );
     if( renderer == NULL ){throw "Can't init SDL renderer";}
 
+    SDL_SetRenderDrawColor( renderer, 120, 120, 120, 255 );
+
     floor = new Floor( width, height, renderer );
-
-    //SDL_Surface *surf = SDL_LoadBMP( "bmp/H30_heavyarmor.bmp" );
-    /*SDL_Surface *surf = IMG_Load( "img/floor.png" );
-    if( surf == 0 ){throw IMG_GetError();}
-    texture = SDL_CreateTextureFromSurface( renderer, surf );NULL
-    if( texture == 0 ){throw "Creating texture error";}
-    SDL_FreeSurface( surf );
-
-    source = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
-    destination = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
-    
-    SDL_QueryTexture( texture, NULL, NULL, &source->w, &source->h );
-    
-    destination->x = 0;
-    destination->y = 0;
-
-    //source->x = 33;
-    source->x = 161;
-    source->y = 41;
-    source->w = 38;
-    source->h = 38;
-
-    destination->w = 200;
-    destination->h = 200;*/
 
 }
 
@@ -67,7 +45,6 @@ void Window::Window::run(){
 void Window::Window::render(){
     SDL_RenderClear( renderer );
     floor->render( 0, 50 );
-    //SDL_RenderCopy( renderer, texture, source, destination );
     SDL_RenderPresent( renderer );
 }
 
