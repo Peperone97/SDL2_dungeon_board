@@ -13,7 +13,6 @@ public:
     int getHeight();
 private:
     SDL_Texture *texture;
-    int width, height;
 };
 
 #endif

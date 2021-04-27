@@ -1,9 +1,26 @@
 #include "floor.h"
 
-Floor::Floor( int tileDimesion, SDL_Renderer *renderer ){
+Floor::Floor( int width, int height, int tileDimesion, SDL_Renderer *renderer ){
     this->tileDimesion = tileDimesion;
     this->renderer = renderer;
-    destination = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
+    this->width = width;
+    this->height = height;
+    
+    destination = (SDL_Rect**)malloc( sizeof(SDL_Rect*) * (width/tileDimesion) );
+    entities = (Entity***)malloc( sizeof(Entity**) * (width/tileDimesion) );
+    for( int i = 0; i < width/tileDimesion; i++ ){
+        destination[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) * (height/tileDimesion) );
+        entities[i] = (Entity**)malloc( sizeof(Entity*) * (height/tileDimesion) );
+    }
+
+    for( int i = 0; i < width/tileDimesion; i++ ){
+        for( int j = 0; j < height/tileDimesion; j++ ){
+            destination[i][j].w = tileDimesion;
+            destination[i][j].h = tileDimesion;
+            entities[i][j] = nullptr;
+        }
+    }
+
     for( int i = 0; i < 4; i++ ){
         tiles[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
     }
@@ -31,22 +48,54 @@ Floor::Floor( int tileDimesion, SDL_Renderer *renderer ){
     texture = new Texture( "img/floor.png", renderer );
 }
 
-void Floor::render( int width, int height ){
-    destination->w = tileDimesion;
-    destination->h = tileDimesion;
-    for( int i = 0; i < width; i += tileDimesion ){
-        destination->x = i;
-        for( int j = 0; j < height; j += tileDimesion ){
-            destination->y = j;
-            texture->render( renderer, tiles[1], destination );
+void Floor::render(){
+    int i = 0, j = 0;
+    for( i = 0; i < width/tileDimesion; i++ ){
+        for( j = 0; j < height/tileDimesion; j++ ){
+            destination[i][j].x = i * tileDimesion;
+            destination[i][j].y = j * tileDimesion;
+            texture->render( renderer, tiles[1], &destination[i][j] );
+            if( entities[i][j] != nullptr ){
+                entities[i][j]->render();
+            //printf("%d, %d\n", i, j);
+        }
+        }
+    }
+}
+void Floor::update(){
+    int i = 0, j = 0;
+    for( i = 0; i < width/tileDimesion; i++ ){
+        for( j = 0; j < height/tileDimesion; j++ ){
+            if( entities[i][j] != nullptr ){
+                //printf("%d, %d\n", destination[i][j].x, destination[i][j].y);
+                entities[i][j]->update();
+            }
         }
     }
 }
 
+void Floor::handleEvent( int x, int y ){
+    int i = x/tileDimesion;
+    int j = y/tileDimesion;
+    //printf("(%d, %d)\n%d, %d\n", x, y, destination[i][j].x, destination[i][j].y);
+    if( entities[i][j] == nullptr ){
+        int pos_x = destination[i][j].x + ((tileDimesion)-(tileDimesion*3/4))/2;
+        int pos_y = destination[i][j].y + ((tileDimesion)-(tileDimesion*3/4))/2;
+        entities[i][j] = new Entity( "img/skeletons2.png", renderer );
+        entities[i][j]->addEntity( tileDimesion*3/4, pos_x, pos_y );
+    }else{
+        delete entities[i][j];
+        entities[i][j] = nullptr;
+    }
+}
+
 Floor::~Floor(){
+    for( int i = 0; i < width/tileDimesion; i++ ){
+        free(destination[i]);
+    }
+    free(destination);
     for( int i = 0; i < 4; i++ ){
         free(tiles[i]);
     }
-    free(destination);
     delete texture;
 }

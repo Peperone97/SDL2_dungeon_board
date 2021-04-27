@@ -2,14 +2,11 @@
 
 Texture::Texture( const char *path, SDL_Renderer *renderer ){
     
-    SDL_Surface *surf = IMG_Load( "img/floor.png" );
+    SDL_Surface *surf = IMG_Load( path );
     if( surf == 0 ){throw IMG_GetError();}
 
     texture = SDL_CreateTextureFromSurface( renderer, surf );
     if( texture == 0 ){throw "Creating texture error";}
-
-    width = surf->w;
-    height = surf->h;
 
     SDL_FreeSurface( surf );
 

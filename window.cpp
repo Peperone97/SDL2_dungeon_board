@@ -16,7 +16,7 @@ Window::Window::Window( const char *title, int width, int height ){
 
     SDL_SetRenderDrawColor( renderer, 120, 120, 120, 255 );
 
-    floor = new Floor( 50, renderer );
+    floor = new Floor( width, height, 100, renderer );
 
 }
 
@@ -27,7 +27,10 @@ void Window::Window::show(){
 void Window::Window::run(){
     bool quit = false;
     SDL_Event e;
+    Uint32 started = SDL_GetTicks(), current_time = 0, last_time = 0;
+    //int frame = SECOND / (SECOND - FPS);
     do{
+        current_time = SDL_GetTicks();
         while( SDL_PollEvent( &e ) != 0){
             if( e.type == SDL_QUIT ){
                 quit = true;
@@ -36,22 +39,31 @@ void Window::Window::run(){
                 quit = eventManager(e);
             }
         }
-
-        render();
+        //printf("secondi: %ld\n", time/1000);
+        //if( current_time - started - last_time == FPS ){
+        //if( (current_time -started) % frame == 0 ){
+            last_time = current_time;
+            update();
+            render();
+        //}else{
+            SDL_Delay( SECOND / FPS );
+        //}
 
     }while( !quit );
 }
 
 void Window::Window::render(){
     SDL_RenderClear( renderer );
-    floor->render( width, height );
+    floor->render();
     SDL_RenderPresent( renderer );
+}
+
+void Window::Window::update(){
+    floor->update();
 }
 
 void Window::Window::close(){
     delete floor;
-    free( source );
-    free( destination);
     SDL_DestroyTexture( texture );
     SDL_DestroyRenderer( renderer );
     SDL_DestroyWindow( window );
@@ -59,9 +71,16 @@ void Window::Window::close(){
 }
 
 bool Window::Window::eventManager(SDL_Event e){
+    if( e.type == SDL_MOUSEBUTTONUP){
+        int x, y;
+        SDL_GetMouseState( &x, &y );
+        //printf("(%d, %d)\n", x, y);
+        floor->handleEvent( x, y );
+    }
     if(e.key.type == SDL_KEYDOWN){
         switch(e.key.keysym.sym){
             case SDLK_w:
+                //update();
                 printf("W\n");
             break;
             case SDLK_a:

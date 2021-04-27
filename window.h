@@ -5,9 +5,14 @@
 #include <SDL2/SDL_image.h>
 
 #include "floor.h"
+#include "texture.h"
 
 #ifndef WINDOW
 #define WINDOW
+
+#define FPS 10
+#define SECOND 1000
+ 
 
 namespace Window{
     class Window{
@@ -21,10 +26,10 @@ namespace Window{
         SDL_Window *window;
         SDL_Renderer *renderer;
         SDL_Texture *texture;
-        SDL_Rect *source, *destination;
         Floor *floor;
 
         void render();
+        void update();
         bool eventManager(SDL_Event e);
         void close();
     };
