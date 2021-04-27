@@ -27,10 +27,7 @@ void Window::Window::show(){
 void Window::Window::run(){
     bool quit = false;
     SDL_Event e;
-    Uint32 started = SDL_GetTicks(), current_time = 0, last_time = 0;
-    //int frame = SECOND / (SECOND - FPS);
     do{
-        current_time = SDL_GetTicks();
         while( SDL_PollEvent( &e ) != 0){
             if( e.type == SDL_QUIT ){
                 quit = true;
@@ -39,15 +36,10 @@ void Window::Window::run(){
                 quit = eventManager(e);
             }
         }
-        //printf("secondi: %ld\n", time/1000);
-        //if( current_time - started - last_time == FPS ){
-        //if( (current_time -started) % frame == 0 ){
-            last_time = current_time;
-            update();
-            render();
-        //}else{
-            SDL_Delay( SECOND / FPS );
-        //}
+
+        update();
+        render();
+        SDL_Delay( SECOND / FPS );
 
     }while( !quit );
 }
