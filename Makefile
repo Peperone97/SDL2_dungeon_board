@@ -4,7 +4,7 @@ LIBS=`pkg-config --libs --cflags sdl2` -lSDL2_image
 RES=program
 
 $(RES): $(OBJ)
-	c++ $(LIBS) $(OBJ) -o $(RES)
+	g++ $(LIBS) $(OBJ) -o $(RES)
 
 main.o: main.cpp window.h
 window.o: window.cpp window.h texture.h
