@@ -16,7 +16,7 @@ Window::Window::Window( const char *title, int width, int height ){
 
     SDL_SetRenderDrawColor( renderer, 120, 120, 120, 255 );
 
-    floor = new Floor( width, height, 100, renderer );
+    core = new Core( width, height, 100, renderer );
 
 }
 
@@ -46,16 +46,16 @@ void Window::Window::run(){
 
 void Window::Window::render(){
     SDL_RenderClear( renderer );
-    floor->render();
+    core->render();
     SDL_RenderPresent( renderer );
 }
 
 void Window::Window::update(){
-    floor->update();
+    core->update();
 }
 
 void Window::Window::close(){
-    delete floor;
+    delete core;
     SDL_DestroyTexture( texture );
     SDL_DestroyRenderer( renderer );
     SDL_DestroyWindow( window );
@@ -63,11 +63,20 @@ void Window::Window::close(){
 }
 
 bool Window::Window::eventManager(SDL_Event e){
-    if( e.type == SDL_MOUSEBUTTONUP){
+    if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT ){
         int x, y;
         SDL_GetMouseState( &x, &y );
         //printf("(%d, %d)\n", x, y);
-        floor->handleEvent( x, y );
+        core->handleEvent( x, y );
+    }
+    if( e.type == SDL_MOUSEWHEEL ){
+        int x, y;
+        SDL_GetMouseState( &x, &y );
+        if( e.wheel.y > 0){
+            core->zoomIn( x, y );
+        }else{
+            core->zoomOut( x, y );
+        }
     }
     if(e.key.type == SDL_KEYDOWN){
         switch(e.key.keysym.sym){

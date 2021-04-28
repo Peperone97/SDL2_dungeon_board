@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "floor.h"
+#include "core.h"
 #include "texture.h"
 
 #ifndef WINDOW
@@ -26,7 +26,7 @@ namespace Window{
         SDL_Window *window;
         SDL_Renderer *renderer;
         SDL_Texture *texture;
-        Floor *floor;
+        Core *core;
 
         void render();
         void update();
