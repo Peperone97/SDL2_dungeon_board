@@ -11,6 +11,8 @@ public:
     void addEntity( int dimension, int x, int y );
     void render();
     void update();
+    void updateDimension( int newDimension );
+    void updatePosition( int new_x, int new_y );
 private:
     int sprite;
     SDL_Renderer *renderer;

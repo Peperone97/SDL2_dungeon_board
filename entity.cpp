@@ -41,6 +41,16 @@ void Entity::update(){
     }
 }
 
+void Entity::updateDimension( int newDimension ){
+    position->w = newDimension;
+    position->h = newDimension;
+}
+
+void Entity::updatePosition( int new_x, int new_y ){
+    position->x = new_x;
+    position->y = new_y;
+}
+
 Entity::~Entity(){
     free(entity[0]);
     free(entity[1]);

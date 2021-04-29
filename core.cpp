@@ -115,6 +115,14 @@ void Core::zoomIn( int x, int y ){
                 }else if( destination[i][j].y > destination[pos_i][pos_j].y ){
                     destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
                 }
+
+                //zoom in entity
+                if( entities[i][j] != nullptr ){
+                    int pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
+                    int pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
+                    entities[i][j]->updateDimension( destination[i][j].w*3/4 );
+                    entities[i][j]->updatePosition( pos_x, pos_y );
+                }
             }
         }
     }
@@ -138,7 +146,15 @@ void Core::zoomOut( int x, int y ){
                     destination[i][j].y = destination[pos_i][pos_j].y - destination[i][j].h * (pos_j - j);
                 }else if( destination[i][j].y > destination[pos_i][pos_j].y ){
                     destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
-                }                
+                }    
+
+                //zoom out entity
+                if( entities[i][j] != nullptr ){
+                    int pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
+                    int pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
+                    entities[i][j]->updateDimension( destination[i][j].w*3/4 );
+                    entities[i][j]->updatePosition( pos_x, pos_y );
+                }            
             }
         }
 
