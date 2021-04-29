@@ -79,6 +79,7 @@ void Core::update(){
 void Core::handleEvent( int x, int y ){
     
     int i = x/destination[0][0].w, j = y/destination[0][0].w;
+    //pos[0] is the x value, pos[1] is the y
     int *pos = pointOfClick(x, y); // find the tile where click is append
 
     if( entities[pos[0]][pos[1]] == nullptr ){
@@ -95,6 +96,7 @@ void Core::handleEvent( int x, int y ){
 }
 
 int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
+    //pos[0] is the x value, pos[1] is the y
     int i = width/tileDimesion / 2;
     int j = width/tileDimesion / 2;
     int *pos = (int*)malloc( sizeof(int) * 2 );
@@ -114,12 +116,12 @@ int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
         }
     }
     pos[1] = j;
-    printf("%d, %d\n", i, j);
     return pos;
 }
 
 void Core::zoomIn( int x, int y ){
     if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
+        //pos[0] is the x value, pos[1] is the y
         int *pos = pointOfClick(x, y);
         pos_i = pos[0];
         pos_j = pos[1];
