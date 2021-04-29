@@ -120,14 +120,10 @@ int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
 
 void Core::zoomIn( int x, int y ){
     if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
-        
-        /*if( zoomLevel == 0 ){ //set the tile zoom position
-            pos_i = x/destination[0][0].w;
-            pos_j = y/destination[0][0].w;
-        }*/
         int *pos = pointOfClick(x, y);
         pos_i = pos[0];
         pos_j = pos[1];
+        free(pos);
 
         zoomLevel++;
 
