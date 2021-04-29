@@ -79,8 +79,8 @@ void Core::update(){
 void Core::handleEvent( int x, int y ){
     
     int i = x/destination[0][0].w, j = y/destination[0][0].w;
-    int *pos = pointOfClick(x, y);
-    //printf("(%d, %d)\n%d, %d\n", x, y, destination[i][j].x, destination[i][j].y);
+    int *pos = pointOfClick(x, y); // find the tile where click is append
+
     if( entities[pos[0]][pos[1]] == nullptr ){
         int pos_x = destination[pos[0]][pos[1]].x + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
         int pos_y = destination[pos[0]][pos[1]].y + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
@@ -90,6 +90,8 @@ void Core::handleEvent( int x, int y ){
         delete entities[pos[0]][pos[1]];
         entities[pos[0]][pos[1]] = nullptr;
     }
+
+    free(pos);
 }
 
 int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
@@ -123,6 +125,9 @@ void Core::zoomIn( int x, int y ){
             pos_i = x/destination[0][0].w;
             pos_j = y/destination[0][0].w;
         }*/
+        int *pos = pointOfClick(x, y);
+        pos_i = pos[0];
+        pos_j = pos[1];
 
         zoomLevel++;
 
