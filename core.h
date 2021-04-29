@@ -24,6 +24,8 @@ private:
     SDL_Renderer *renderer;
     SDL_Rect *tiles[4];
     Texture *texture;
+
+    void repositioning( int newDim, int pos_i, int pos_j );
 };
 
 #endif

@@ -90,28 +90,30 @@ void Core::handleEvent( int x, int y ){
 }
 
 void Core::zoomIn( int x, int y ){
-    if( tileDimesion * (zoomLevel + 1) <= width && tileDimesion * (zoomLevel + 1) <= height ){
-        if( zoomLevel == 0 ){
+    if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
+        
+        if( zoomLevel == 0 ){ //set the tile zoom position
             pos_i = x/destination[0][0].w;
             pos_j = y/destination[0][0].w;
         }
+
         zoomLevel++;
-        printf("%d, %d\n", pos_i, pos_j);
+
         for( int i = 0; i < width/tileDimesion; i++ ){
             for( int j = 0; j < height/tileDimesion; j++ ){
                 destination[i][j].w += tileDimesion;
                 destination[i][j].h += tileDimesion;
 
                 if( destination[i][j].x < destination[pos_i][pos_j].x ){
-                    destination[i][j].x -= destination[i][j].w/(zoomLevel+1);
+                    destination[i][j].x = destination[pos_i][pos_j].x - destination[i][j].w * (pos_i - i);
                 }else if( destination[i][j].x > destination[pos_i][pos_j].x ){
-                    destination[i][j].x += destination[i][j].w/(zoomLevel+1);
+                    destination[i][j].x = destination[pos_i][pos_j].x + destination[i][j].w * (i - pos_i);
                 }
                 
                 if( destination[i][j].y < destination[pos_i][pos_j].y ){
-                    destination[i][j].y -= destination[i][j].h/(zoomLevel+1);
+                    destination[i][j].y = destination[pos_i][pos_j].y - destination[i][j].h * (pos_j - j);
                 }else if( destination[i][j].y > destination[pos_i][pos_j].y ){
-                    destination[i][j].y += destination[i][j].h/(zoomLevel+1);
+                    destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
                 }
             }
         }
@@ -120,24 +122,23 @@ void Core::zoomIn( int x, int y ){
 
 void Core::zoomOut( int x, int y ){
     if( zoomLevel > 0 ){
-        //int pos_i = x/destination[0][0].w, pos_j = y/destination[0][0].w;
         
         for( int i = 0; i < width/tileDimesion; i++ ){
             for( int j = 0; j < height/tileDimesion; j++ ){
+                destination[i][j].w -= tileDimesion;
+                destination[i][j].h -= tileDimesion;
+
                 if( destination[i][j].x < destination[pos_i][pos_j].x ){
-                    destination[i][j].x += destination[i][j].w/(zoomLevel+1);
+                    destination[i][j].x = destination[pos_i][pos_j].x - destination[i][j].w * (pos_i - i);
                 }else if( destination[i][j].x > destination[pos_i][pos_j].x ){
-                    destination[i][j].x -= destination[i][j].w/(zoomLevel+1);
+                    destination[i][j].x = destination[pos_i][pos_j].x + destination[i][j].w * (i - pos_i);
                 }
                 
                 if( destination[i][j].y < destination[pos_i][pos_j].y ){
-                    destination[i][j].y += destination[i][j].h/(zoomLevel+1);
+                    destination[i][j].y = destination[pos_i][pos_j].y - destination[i][j].h * (pos_j - j);
                 }else if( destination[i][j].y > destination[pos_i][pos_j].y ){
-                    destination[i][j].y -= destination[i][j].h/(zoomLevel+1);
-                }
-
-                destination[i][j].w -= tileDimesion;
-                destination[i][j].h -= tileDimesion;
+                    destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
+                }                
             }
         }
 
