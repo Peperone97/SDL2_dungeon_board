@@ -18,7 +18,6 @@ public:
     void zoomOut( int x, int y );
 private:
     int width, height, tileDimesion, zoomLevel;
-    int pos_i, pos_j;
     Entity ***entities;
     SDL_Rect **destination;
     SDL_Renderer *renderer;

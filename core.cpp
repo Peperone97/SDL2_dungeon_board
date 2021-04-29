@@ -120,12 +120,13 @@ int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
 }
 
 void Core::zoomIn( int x, int y ){
+    //pos[0] is the x value, pos[1] is the y
+    int *pos = pointOfClick(x, y);
+    int pos_i = pos[0];
+    int pos_j = pos[1];
+    free(pos);
+
     if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
-        //pos[0] is the x value, pos[1] is the y
-        int *pos = pointOfClick(x, y);
-        pos_i = pos[0];
-        pos_j = pos[1];
-        free(pos);
 
         zoomLevel++;
 
@@ -159,8 +160,13 @@ void Core::zoomIn( int x, int y ){
 }
 
 void Core::zoomOut( int x, int y ){
-    if( zoomLevel > 0 ){
-        
+    if( zoomLevel > 1 ){
+        //pos[0] is the x value, pos[1] is the y
+        int *pos = pointOfClick(x, y);
+        int pos_i = pos[0];
+        int pos_j = pos[1];
+        free(pos);
+
         for( int i = 0; i < width/tileDimesion; i++ ){
             for( int j = 0; j < height/tileDimesion; j++ ){
                 destination[i][j].w -= tileDimesion;
@@ -188,6 +194,16 @@ void Core::zoomOut( int x, int y ){
             }
         }
 
+        zoomLevel--;
+    }else if( zoomLevel == 1 ){ //for fixing dezoom bux
+        for( int i = 0; i < width/tileDimesion; i++ ){
+            for( int j = 0; j < height/tileDimesion; j++ ){
+                destination[i][j].w = tileDimesion;
+                destination[i][j].h = tileDimesion;
+                destination[i][j].x = i * tileDimesion;
+                destination[i][j].y = j * tileDimesion;
+            }
+        }
         zoomLevel--;
     }
 }

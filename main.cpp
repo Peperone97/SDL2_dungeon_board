@@ -6,7 +6,7 @@ int main( int argc, char **argv ){
 
     Window::Window *win;
     try{
-        win = new Window::Window( "Prove", 500, 500 );
+        win = new Window::Window( "Prove", 800, 800 );
     }catch( const char *c ){
         printf("%s\n", c);
         return 1;
