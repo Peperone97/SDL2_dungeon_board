@@ -5,6 +5,7 @@ Core::Core( int width, int height, int tileDimesion, SDL_Renderer *renderer ){
     this->renderer = renderer;
     this->width = width;
     this->height = height;
+    zoomLevel = 0;
     
     destination = (SDL_Rect**)malloc( sizeof(SDL_Rect*) * (width/tileDimesion) );
     entities = (Entity***)malloc( sizeof(Entity**) * (width/tileDimesion) );
