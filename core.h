@@ -26,6 +26,7 @@ private:
     Texture *texture;
 
     void repositioning( int newDim, int pos_i, int pos_j );
+    int* pointOfClick( int x, int y );
 };
 
 #endif

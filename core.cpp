@@ -77,26 +77,52 @@ void Core::update(){
 }
 
 void Core::handleEvent( int x, int y ){
+    
     int i = x/destination[0][0].w, j = y/destination[0][0].w;
+    int *pos = pointOfClick(x, y);
     //printf("(%d, %d)\n%d, %d\n", x, y, destination[i][j].x, destination[i][j].y);
-    if( entities[i][j] == nullptr ){
-        int pos_x = destination[i][j].x + ((tileDimesion)-(tileDimesion*3/4))/2;
-        int pos_y = destination[i][j].y + ((tileDimesion)-(tileDimesion*3/4))/2;
-        entities[i][j] = new Entity( "img/skeletons2.png", renderer );
-        entities[i][j]->addEntity( tileDimesion*3/4, pos_x, pos_y );
+    if( entities[pos[0]][pos[1]] == nullptr ){
+        int pos_x = destination[pos[0]][pos[1]].x + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
+        int pos_y = destination[pos[0]][pos[1]].y + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
+        entities[pos[0]][pos[1]] = new Entity( "img/skeletons2.png", renderer );
+        entities[pos[0]][pos[1]]->addEntity( destination[0][0].w*3/4, pos_x, pos_y );
     }else{
-        delete entities[i][j];
-        entities[i][j] = nullptr;
+        delete entities[pos[0]][pos[1]];
+        entities[pos[0]][pos[1]] = nullptr;
     }
+}
+
+int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
+    int i = width/tileDimesion / 2;
+    int j = width/tileDimesion / 2;
+    int *pos = (int*)malloc( sizeof(int) * 2 );
+    while( destination[i][j].x > x || destination[i][j].w + destination[i][j].x < x ){
+        if( destination[i][j].x > x ){
+            i--;
+        }else if( destination[i][j].x < x ){
+            i++;
+        }
+    }
+    pos[0] = i;
+    while( destination[i][j].y > y || destination[i][j].h + destination[i][j].y < y ){
+        if( destination[i][j].y > y ){
+            j--;
+        }else if( destination[i][j].y < y ){
+            j++;
+        }
+    }
+    pos[1] = j;
+    printf("%d, %d\n", i, j);
+    return pos;
 }
 
 void Core::zoomIn( int x, int y ){
     if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
         
-        if( zoomLevel == 0 ){ //set the tile zoom position
+        /*if( zoomLevel == 0 ){ //set the tile zoom position
             pos_i = x/destination[0][0].w;
             pos_j = y/destination[0][0].w;
-        }
+        }*/
 
         zoomLevel++;
 
