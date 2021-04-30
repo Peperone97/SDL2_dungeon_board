@@ -42,7 +42,6 @@ void Window::Window::run(){
 
         if( slide ){
             SDL_GetMouseState( &new_x, &new_y );
-            printf("Slide: %d, %d\n", new_x - x, new_y - y);
             core->moveMap( new_x - x, new_y - y );
             x = new_x;
             y = new_y;
@@ -77,7 +76,6 @@ bool Window::Window::eventManager(SDL_Event e){
     if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT ){
         int x, y;
         SDL_GetMouseState( &x, &y );
-        //printf("(%d, %d)\n", x, y);
         core->handleEvent( x, y );
     }
     if( e.type == SDL_MOUSEWHEEL ){
@@ -90,11 +88,9 @@ bool Window::Window::eventManager(SDL_Event e){
         }
     }
     if( e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_RIGHT){
-        printf("Start slide\n");
         slide = true;
     }
     if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_RIGHT){
-        printf("End slide\n");
         slide = false;
     }
     if(e.key.type == SDL_KEYDOWN){

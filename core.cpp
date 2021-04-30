@@ -218,10 +218,6 @@ void Core::zoomOut( int x, int y ){
 }
 
 void Core::moveMap( int x_move, int y_move ){
-    //printf("%d, %d\n", x_move, destination[0][0].x);
-    /*if( x_move > 0 && destination[0][0].x < destination[0][0].w ){ //i can't go more to left
-        x_move = -destination[0][0].x;
-    }*/
     int pos_x, pos_y;
     if( destination[0][0].x + x_move > 0 ){ //i can't go more to left
         x_move = 0;
