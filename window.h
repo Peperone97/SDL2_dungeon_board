@@ -3,6 +3,7 @@
 #include <exception>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <thread>
 
 #include "core.h"
 #include "texture.h"
@@ -23,7 +24,7 @@ namespace Window{
         void run();
     private:
         int width, height;
-        bool slide;
+        bool slide, draw;
         SDL_Window *window;
         SDL_Renderer *renderer;
         SDL_Texture *texture;
@@ -33,6 +34,8 @@ namespace Window{
         void update();
         bool eventManager(SDL_Event e);
         void close();
+        void prv();
+
     };
 }
 

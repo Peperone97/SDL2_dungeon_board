@@ -45,6 +45,8 @@ void Window::Window::run(){
             core->moveMap( new_x - x, new_y - y );
             x = new_x;
             y = new_y;
+            
+            draw = true;
         }
 
         update();
@@ -55,12 +57,15 @@ void Window::Window::run(){
 }
 
 void Window::Window::render(){
-    SDL_RenderClear( renderer );
-    core->render();
+    if( draw ){ //render only if is an update
+        SDL_RenderClear( renderer );
+        core->render();
+    }
     SDL_RenderPresent( renderer );
 }
 
 void Window::Window::update(){
+    draw = true;
     core->update();
 }
 
@@ -77,6 +82,8 @@ bool Window::Window::eventManager(SDL_Event e){
         int x, y;
         SDL_GetMouseState( &x, &y );
         core->handleEvent( x, y );
+        
+        draw = true;
     }
     if( e.type == SDL_MOUSEWHEEL ){
         int x, y;
@@ -86,6 +93,8 @@ bool Window::Window::eventManager(SDL_Event e){
         }else{
             core->zoomOut( x, y );
         }
+
+        draw = true;
     }
     if( e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_RIGHT){
         slide = true;

@@ -220,16 +220,16 @@ void Core::zoomOut( int x, int y ){
 void Core::moveMap( int x_move, int y_move ){
     int pos_x, pos_y;
     if( destination[0][0].x + x_move > 0 ){ //i can't go more to left
-        x_move = 0;
+        x_move = - destination[0][0].x;
     }
     if( destination[width/tileDimesion-1][height/tileDimesion-1].x + x_move < width ){ //i can't go more to right
-        x_move = 0;
+        x_move = + (width - destination[0][0].w) - destination[width/tileDimesion-1][height/tileDimesion-1].x;
     }
     if( destination[0][0].y + y_move > 0 ){ //i can't go more up
-        y_move = 0;
+        y_move = - destination[0][0].y;
     }
     if( destination[width/tileDimesion-1][height/tileDimesion-1].y + y_move < height ){ //i can't go more down
-        y_move = 0;
+        y_move = + (height - destination[0][0].h) - destination[width/tileDimesion-1][height/tileDimesion-1].y;
     }
     for( int i = 0; i < width/tileDimesion; i++ ){
         for( int j = 0; j < height/tileDimesion; j++ ){
