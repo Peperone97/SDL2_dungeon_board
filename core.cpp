@@ -120,13 +120,14 @@ int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
 }
 
 void Core::zoomIn( int x, int y ){
-    //pos[0] is the x value, pos[1] is the y
-    int *pos = pointOfClick(x, y);
-    int pos_i = pos[0];
-    int pos_j = pos[1];
-    free(pos);
-
     if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
+        //pos[0] is the x value, pos[1] is the y
+        int *pos = pointOfClick(x, y);
+        pos_i = pos[0];
+        pos_j = pos[1];
+        free(pos);
+
+        int pos_x, pos_y;
 
         zoomLevel++;
 
@@ -149,8 +150,8 @@ void Core::zoomIn( int x, int y ){
 
                 //zoom in entity
                 if( entities[i][j] != nullptr ){
-                    int pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
-                    int pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
+                    pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
+                    pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
                     entities[i][j]->updateDimension( destination[i][j].w*3/4 );
                     entities[i][j]->updatePosition( pos_x, pos_y );
                 }
@@ -160,6 +161,7 @@ void Core::zoomIn( int x, int y ){
 }
 
 void Core::zoomOut( int x, int y ){
+    int pos_x, pos_y;
     if( zoomLevel > 1 ){
         //pos[0] is the x value, pos[1] is the y
         int *pos = pointOfClick(x, y);
@@ -186,8 +188,8 @@ void Core::zoomOut( int x, int y ){
 
                 //zoom out entity
                 if( entities[i][j] != nullptr ){
-                    int pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
-                    int pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
+                    pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
+                    pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
                     entities[i][j]->updateDimension( destination[i][j].w*3/4 );
                     entities[i][j]->updatePosition( pos_x, pos_y );
                 }            
@@ -202,9 +204,48 @@ void Core::zoomOut( int x, int y ){
                 destination[i][j].h = tileDimesion;
                 destination[i][j].x = i * tileDimesion;
                 destination[i][j].y = j * tileDimesion;
+
+                if( entities[i][j] != nullptr ){
+                    pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
+                    pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
+                    entities[i][j]->updateDimension( destination[i][j].w*3/4 );
+                    entities[i][j]->updatePosition( pos_x, pos_y );
+                }
             }
         }
         zoomLevel--;
+    }
+}
+
+void Core::moveMap( int x_move, int y_move ){
+    //printf("%d, %d\n", x_move, destination[0][0].x);
+    /*if( x_move > 0 && destination[0][0].x < destination[0][0].w ){ //i can't go more to left
+        x_move = -destination[0][0].x;
+    }*/
+    int pos_x, pos_y;
+    if( destination[0][0].x + x_move > 0 ){ //i can't go more to left
+        x_move = 0;
+    }
+    if( destination[width/tileDimesion-1][height/tileDimesion-1].x + x_move < width ){ //i can't go more to right
+        x_move = 0;
+    }
+    if( destination[0][0].y + y_move > 0 ){ //i can't go more up
+        y_move = 0;
+    }
+    if( destination[width/tileDimesion-1][height/tileDimesion-1].y + y_move < height ){ //i can't go more down
+        y_move = 0;
+    }
+    for( int i = 0; i < width/tileDimesion; i++ ){
+        for( int j = 0; j < height/tileDimesion; j++ ){
+            destination[i][j].x += x_move;
+            destination[i][j].y += y_move;
+            //move entities
+            if( entities[i][j] != nullptr){
+                pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
+                pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
+                entities[i][j]->updatePosition( pos_x, pos_y );
+            }
+        }
     }
 }
 

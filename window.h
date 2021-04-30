@@ -23,6 +23,7 @@ namespace Window{
         void run();
     private:
         int width, height;
+        bool slide;
         SDL_Window *window;
         SDL_Renderer *renderer;
         SDL_Texture *texture;

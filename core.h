@@ -16,8 +16,10 @@ public:
     void handleEvent( int x, int y );
     void zoomIn( int x, int y );
     void zoomOut( int x, int y );
+    void moveMap( int x_move, int y_move );
 private:
     int width, height, tileDimesion, zoomLevel;
+    int pos_i, pos_j;
     Entity ***entities;
     SDL_Rect **destination;
     SDL_Renderer *renderer;

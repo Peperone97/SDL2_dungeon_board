@@ -3,6 +3,7 @@
 Window::Window::Window( const char *title, int width, int height ){
     this->width = width;
     this->height = height;
+    slide = false;
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 ){throw "Can't init SDL2";}  
 
@@ -26,8 +27,10 @@ void Window::Window::show(){
 
 void Window::Window::run(){
     bool quit = false;
+    int x, y, new_x, new_y;
     SDL_Event e;
     do{
+        SDL_GetMouseState( &x, &y );
         while( SDL_PollEvent( &e ) != 0){
             if( e.type == SDL_QUIT ){
                 quit = true;
@@ -35,6 +38,14 @@ void Window::Window::run(){
             else{
                 quit = eventManager(e);
             }
+        }
+
+        if( slide ){
+            SDL_GetMouseState( &new_x, &new_y );
+            printf("Slide: %d, %d\n", new_x - x, new_y - y);
+            core->moveMap( new_x - x, new_y - y );
+            x = new_x;
+            y = new_y;
         }
 
         update();
@@ -77,6 +88,14 @@ bool Window::Window::eventManager(SDL_Event e){
         }else{
             core->zoomOut( x, y );
         }
+    }
+    if( e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_RIGHT){
+        printf("Start slide\n");
+        slide = true;
+    }
+    if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_RIGHT){
+        printf("End slide\n");
+        slide = false;
     }
     if(e.key.type == SDL_KEYDOWN){
         switch(e.key.keysym.sym){
