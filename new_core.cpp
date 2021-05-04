@@ -1,4 +1,4 @@
-#include "core.h"
+#include "new_core.h"
 
 Core::Core( int width, int height, int tileDimesion, SDL_Renderer *renderer ){
     this->tileDimesion = tileDimesion;
@@ -6,7 +6,7 @@ Core::Core( int width, int height, int tileDimesion, SDL_Renderer *renderer ){
     this->width = width;
     this->height = height;
     zoomLevel = 0;
-
+    
     destination = (SDL_Rect**)malloc( sizeof(SDL_Rect*) * (width/tileDimesion) );
     entities = (Entity***)malloc( sizeof(Entity**) * (width/tileDimesion) );
     for( int i = 0; i < width/tileDimesion; i++ ){
@@ -14,7 +14,7 @@ Core::Core( int width, int height, int tileDimesion, SDL_Renderer *renderer ){
         entities[i] = (Entity**)malloc( sizeof(Entity*) * (height/tileDimesion) );
     }
 
-    for( int i = 0; i < width/tileDimesion; i++ ){
+    /*for( int i = 0; i < width/tileDimesion; i++ ){
         for( int j = 0; j < height/tileDimesion; j++ ){
             destination[i][j].w = tileDimesion;
             destination[i][j].h = tileDimesion;
@@ -23,7 +23,9 @@ Core::Core( int width, int height, int tileDimesion, SDL_Renderer *renderer ){
             
             entities[i][j] = nullptr;
         }
-    }
+    }*/
+    first_full_visible_tie_x = 0;
+    first_full_visible_tie_y = 0;
 
     for( int i = 0; i < 4; i++ ){
         tiles[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
@@ -54,9 +56,14 @@ Core::Core( int width, int height, int tileDimesion, SDL_Renderer *renderer ){
 
 void Core::render(){
     int i = 0, j = 0;
+    SDL_Rect dest;
+    dest.w = tileDimesion;
+    dest.h = tileDimesion;
     for( i = 0; i < width/tileDimesion; i++ ){
+        dest.x = i + first_full_visible_tie_x; 
         for( j = 0; j < height/tileDimesion; j++ ){
-            texture->render( renderer, tiles[1], &destination[i][j] );
+            dest.y = j + first_full_visible_tie_y;
+            texture->render( renderer, tiles[1], &dest );
             if( entities[i][j] != nullptr ){
                 entities[i][j]->render();
             //printf("%d, %d\n", i, j);
@@ -120,7 +127,7 @@ int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
 }
 
 void Core::zoomIn( int x, int y ){
-    if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
+    /*if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
         //pos[0] is the x value, pos[1] is the y
         int *pos = pointOfClick(x, y);
         pos_i = pos[0];
@@ -157,7 +164,8 @@ void Core::zoomIn( int x, int y ){
                 }
             }
         }
-    }
+    }*/
+    printf("%d, %d\n", x, y);
 }
 
 void Core::zoomOut( int x, int y ){
@@ -243,6 +251,10 @@ void Core::moveMap( int x_move, int y_move ){
             }
         }
     }
+}
+
+void Core::draw(){
+
 }
 
 Core::~Core(){

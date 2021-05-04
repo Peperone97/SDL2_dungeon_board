@@ -3,9 +3,10 @@
 #include <exception>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <thread>
+#include <pthread.h>
 
 #include "core.h"
+//#include "new_core.h"
 #include "texture.h"
 
 #ifndef WINDOW
@@ -23,18 +24,25 @@ namespace Window{
         void show();
         void run();
     private:
-        int width, height;
-        bool slide, draw;
+        int width, height, previous_x, previous_y; //previous x/y used for slide the map
+        bool slide, draw, quit;
+
         SDL_Window *window;
         SDL_Renderer *renderer;
         SDL_Texture *texture;
-        Core *core;
+        SDL_Event e;
+        SDL_Thread *input_thread; 
 
+        Core *core;
+        
+        static void event_wrapper( void* obj ){
+            static_cast<Window*>(obj)->eventManager();
+        }
         void render();
         void update();
-        bool eventManager(SDL_Event e);
+        void eventManager();
         void close();
-        void prv();
+        void provaNonStatica();
 
     };
 }

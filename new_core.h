@@ -19,6 +19,7 @@ public:
     void moveMap( int x_move, int y_move );
 private:
     int width, height, tileDimesion, zoomLevel;
+    int first_full_visible_tie_x, first_full_visible_tie_y;
     int pos_i, pos_j;
     Entity ***entities;
     SDL_Rect **destination;
@@ -26,6 +27,8 @@ private:
     SDL_Rect *tiles[4];
     Texture *texture;
 
+    void draw();
+    
     void repositioning( int newDim, int pos_i, int pos_j );
     int* pointOfClick( int x, int y );
 };
