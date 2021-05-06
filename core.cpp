@@ -104,8 +104,8 @@ void Core::handleEvent( int x, int y ){
 
 int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
     //pos[0] is the x value, pos[1] is the y
-    int i = render_last_index_x / 2;
-    int j = render_last_index_y / 2;
+    int i = ( render_first_index_x + render_last_index_x ) / 2;
+    int j = ( render_first_index_y + render_last_index_y ) / 2;
     int *pos = (int*)malloc( sizeof(int) * 2 );
     while( destination[i][j].x > x || destination[i][j].w + destination[i][j].x < x ){
         if( destination[i][j].x > x ){
@@ -261,14 +261,14 @@ void Core::moveMap( int x_move, int y_move ){
     if( destination[0][0].x + x_move > 0 ){ //i can't go more to left
         x_move = - destination[0][0].x;
     }
-    if( destination[width/tileDimesion - 1][height/tileDimesion - 1].x <= width - x_move ){ //i can't go more to right
-        x_move = width - destination[width/tileDimesion - 1][height/tileDimesion - 1].x;
+    if( destination[width/tileDimesion - 1][height/tileDimesion - 1].x + destination[width/tileDimesion - 1][height/tileDimesion - 1].w <= width - x_move ){ //i can't go more to right
+        x_move = width - destination[width/tileDimesion - 1][height/tileDimesion - 1].x - destination[width/tileDimesion - 1][height/tileDimesion - 1].w;
     }
     if( destination[0][0].y + y_move > 0 ){ //i can't go more up
         y_move = - destination[0][0].y;
     }
-    if( destination[width/tileDimesion - 1][height/tileDimesion - 1].y <= height - y_move ){ //i can't go more to right
-        y_move = height - destination[width/tileDimesion - 1][height/tileDimesion - 1].y;
+    if( destination[width/tileDimesion - 1][height/tileDimesion - 1].y + destination[width/tileDimesion - 1][height/tileDimesion - 1].h <= height - y_move ){ //i can't go more down
+        y_move = height - destination[height/tileDimesion - 1][height/tileDimesion - 1].y - destination[width/tileDimesion - 1][height/tileDimesion - 1].h;
     }
     for( int i = 0; i < width/tileDimesion; i++ ){
         for( int j = 0; j < height/tileDimesion; j++ ){
@@ -302,6 +302,7 @@ void Core::moveMap( int x_move, int y_move ){
         render_last_index_x--;
     }
     //down
+    printf("%d %d %d %d\n", destination[0][render_last_index_y].y, destination[0][render_last_index_y].h, destination[0][render_last_index_y].y+destination[0][render_last_index_y].h, height);
     if( destination[0][render_last_index_y].y + destination[0][render_last_index_y].h < height ){
         render_last_index_y++;
     }else if( destination[0][render_last_index_y].y > height ){
@@ -309,15 +310,6 @@ void Core::moveMap( int x_move, int y_move ){
     }
     printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
 }
-
-/*bool Core::isVisible( int w, int h, int x, int y ){
-    if( w + x <= 0 || h + y <= 0){
-        return false;
-    }else if( x >= width || y >= height ){
-        return false;
-    }
-    return true;
-}*/
 
 Core::~Core(){
     for( int i = 0; i < width/tileDimesion; i++ ){

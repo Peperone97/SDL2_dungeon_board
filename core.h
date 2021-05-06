@@ -30,7 +30,6 @@ private:
 
     void repositioning( int newDim, int pos_i, int pos_j );
     int* pointOfClick( int x, int y );
-    bool isVisible( int w, int h, int x, int y );
 };
 
 #endif
