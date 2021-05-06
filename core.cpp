@@ -128,7 +128,7 @@ int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
 
 void Core::zoomIn( int x, int y ){
     //pos[0] is the x value, pos[1] is the y
-    printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
+    printf("Zoom in\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
     int *pos = pointOfClick(x, y);
     pos_i = pos[0];
     pos_j = pos[1];
@@ -182,7 +182,7 @@ void Core::zoomIn( int x, int y ){
 
 void Core::zoomOut( int x, int y ){
     int pos_x, pos_y;
-    printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
+    printf("Zoom Out\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
     if( zoomLevel > 1 ){
         //pos[0] is the x value, pos[1] is the y
         int *pos = pointOfClick(x, y);
@@ -256,6 +256,7 @@ void Core::zoomOut( int x, int y ){
 }
 
 void Core::moveMap( int x_move, int y_move ){
+    printf("Move\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
     int pos_x, pos_y;
     if( destination[0][0].x + x_move > 0 ){ //i can't go more to left
         x_move = - destination[0][0].x;
@@ -281,19 +282,32 @@ void Core::moveMap( int x_move, int y_move ){
             }
         }
     }
-    //update render index
+    //update render index   
+    //left 
     if( destination[render_first_index_x][0].x > 0 ){
         render_first_index_x--;
+    }else if( destination[render_first_index_x][0].x + destination[render_first_index_x][0].w < 0 ){
+        render_first_index_x++;
     }
+    //up
     if( destination[0][render_first_index_y].y > 0 ){
         render_first_index_y--;
+    }else if( destination[0][render_first_index_y].y + destination[0][render_first_index_y].h < 0 ){
+        render_first_index_y++;
     }
+    //right
     if( destination[render_last_index_x][0].x + destination[render_last_index_x][0].w < width ){
         render_last_index_x++;
+    }else if( destination[render_last_index_x][0].x > width ){
+        render_last_index_x--;
     }
+    //down
     if( destination[0][render_last_index_y].y + destination[0][render_last_index_y].h < height ){
         render_last_index_y++;
+    }else if( destination[0][render_last_index_y].y > height ){
+        render_last_index_y--;
     }
+    printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
 }
 
 /*bool Core::isVisible( int w, int h, int x, int y ){
