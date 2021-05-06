@@ -25,9 +25,12 @@ private:
     SDL_Renderer *renderer;
     SDL_Rect *tiles[4];
     Texture *texture;
+    //render cordinates
+    int render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y;
 
     void repositioning( int newDim, int pos_i, int pos_j );
     int* pointOfClick( int x, int y );
+    bool isVisible( int w, int h, int x, int y );
 };
 
 #endif

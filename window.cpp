@@ -29,20 +29,10 @@ void Window::Window::run(){
     quit = false;
     slide = false;
     draw = false;
-    input_thread = SDL_CreateThread( (SDL_ThreadFunction)Window::event_wrapper, "thread", this );
-    int new_x, new_y;
+    input_thread = SDL_CreateThread( (SDL_ThreadFunction)Window::event_wrapper, "input", this );
+    update_thread = SDL_CreateThread( (SDL_ThreadFunction)Window::update_wrapper, "update", this );
     do{
 
-        if( slide ){
-            SDL_GetMouseState( &new_x, &new_y );
-            core->moveMap( new_x - previous_x, new_y - previous_y );
-            previous_x = new_x;
-            previous_y = new_y;
-            
-            draw = true;
-        }
-
-        update();
         render();
         SDL_Delay( SECOND / FPS );
 
@@ -50,16 +40,26 @@ void Window::Window::run(){
 }
 
 void Window::Window::render(){
-    if( draw ){ //render only if is an update
-        SDL_RenderClear( renderer );
-        core->render();
-    }
+    //if( draw ){ //render only if is an update
+    SDL_RenderClear( renderer );
+    core->render();
+    //}
     SDL_RenderPresent( renderer );
 }
 
 void Window::Window::update(){
-    draw = true;
-    core->update();
+    int new_x, new_y;
+    do{
+        if( slide ){
+            SDL_GetMouseState( &new_x, &new_y );
+            core->moveMap( new_x - previous_x, new_y - previous_y );
+            previous_x = new_x;
+            previous_y = new_y;
+        }
+
+        core->update();
+        SDL_Delay( 100 ); //milliseconds
+    }while( !quit );
 }
 
 void Window::Window::close(){
@@ -143,6 +143,7 @@ void Window::Window::eventManager(){
                 }
             }
         }
+        SDL_Delay( 100 ); //milliseconds
     }while( !quit );
 }
 

@@ -31,12 +31,15 @@ namespace Window{
         SDL_Renderer *renderer;
         SDL_Texture *texture;
         SDL_Event e;
-        SDL_Thread *input_thread; 
+        SDL_Thread *input_thread, *update_thread; 
 
         Core *core;
         
         static void event_wrapper( void* obj ){
             static_cast<Window*>(obj)->eventManager();
+        }
+        static void update_wrapper( void *obj ){
+            static_cast<Window*>(obj)->update();
         }
         void render();
         void update();
