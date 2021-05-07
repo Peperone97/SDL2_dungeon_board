@@ -19,7 +19,7 @@ Entity::Entity( const char* path, SDL_Renderer *renderer ){
     entity[1]->y = 15;
     entity[1]->w = 64;
     entity[1]->h = 68;
-
+    
 }
 
 void Entity::addEntity( int dimension, int x, int y ){

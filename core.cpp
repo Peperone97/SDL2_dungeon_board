@@ -1,26 +1,35 @@
 #include "core.h"
 
-Core::Core( int width, int height, int tileDimesion, SDL_Renderer *renderer ){
-    this->tileDimesion = tileDimesion;
+Core::Core( int width, int height, int tileDimension, SDL_Renderer *renderer ){
+    this->tileDimesion = tileDimension;
     this->renderer = renderer;
     this->width = width;
     this->height = height;
     zoomLevel = 0;
+    dim_i = width/tileDimension;
+    dim_j = width/tileDimension;
+    //random
+    time_t t;
+    srand(time(&t));
 
-    destination = (SDL_Rect**)malloc( sizeof(SDL_Rect*) * (width/tileDimesion) );
-    entities = (Entity***)malloc( sizeof(Entity**) * (width/tileDimesion) );
-    for( int i = 0; i < width/tileDimesion; i++ ){
-        destination[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) * (height/tileDimesion) );
-        entities[i] = (Entity**)malloc( sizeof(Entity*) * (height/tileDimesion) );
+    destination = (SDL_Rect**)malloc( sizeof(SDL_Rect*) * (dim_i) );
+    entities = (Entity***)malloc( sizeof(Entity**) * (dim_i) );
+    typeOfTile = (int**)malloc( sizeof(int*) * (dim_i) );
+    for( int i = 0; i < dim_i; i++ ){
+        destination[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) * (dim_j) );
+        entities[i] = (Entity**)malloc( sizeof(Entity*) * (dim_j) );
+        typeOfTile[i] = (int*)malloc( sizeof(int) * (dim_j) );
     }
 
-    for( int i = 0; i < width/tileDimesion; i++ ){
-        for( int j = 0; j < height/tileDimesion; j++ ){
-            destination[i][j].w = tileDimesion;
-            destination[i][j].h = tileDimesion;
-            destination[i][j].x = i * tileDimesion;
-            destination[i][j].y = j * tileDimesion;
+    for( int i = 0; i < dim_i; i++ ){
+        for( int j = 0; j < dim_j; j++ ){
+            destination[i][j].w = tileDimension;
+            destination[i][j].h = tileDimension;
+            destination[i][j].x = i * tileDimension;
+            destination[i][j].y = j * tileDimension;
             
+            typeOfTile[i][j] = rand() % 4;
+
             entities[i][j] = nullptr;
         }
     }
@@ -28,8 +37,8 @@ Core::Core( int width, int height, int tileDimesion, SDL_Renderer *renderer ){
     //what render?
     render_first_index_x = 0;
     render_first_index_y = 0;
-    render_last_index_x =  width/tileDimesion - 1;
-    render_last_index_y = height/tileDimesion -1;
+    render_last_index_x =  dim_i - 1;
+    render_last_index_y = dim_j -1;
 
     for( int i = 0; i < 4; i++ ){
         tiles[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
@@ -63,7 +72,7 @@ void Core::render(){
     //printf("Tiles:\n");
     for( i = render_first_index_x; i <= render_last_index_x; i++ ){
         for( j = render_first_index_y; j <= render_last_index_y; j++ ){
-            texture->render( renderer, tiles[1], &destination[i][j] );
+            texture->render( renderer, tiles[typeOfTile[i][j]], &destination[i][j] );
             if( entities[i][j] != nullptr ){
                 entities[i][j]->render();
             }
@@ -73,8 +82,8 @@ void Core::render(){
 }
 void Core::update(){
     int i = 0, j = 0;
-    for( i = 0; i < width/tileDimesion; i++ ){
-        for( j = 0; j < height/tileDimesion; j++ ){
+    for( i = 0; i < dim_i; i++ ){
+        for( j = 0; j < dim_j; j++ ){
             if( entities[i][j] != nullptr ){
                 //printf("%d, %d\n", destination[i][j].x, destination[i][j].y);
                 entities[i][j]->update();
@@ -128,43 +137,31 @@ int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
 
 void Core::zoomIn( int x, int y ){
     //pos[0] is the x value, pos[1] is the y
-    printf("Zoom in\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
+    //printf("Zoom in\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
     int *pos = pointOfClick(x, y);
-    pos_i = pos[0];
-    pos_j = pos[1];
+    int pos_i = pos[0];
+    int pos_j = pos[1];
     free(pos);
     if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
         int pos_x, pos_y;
 
         zoomLevel++;
 
-        for( int i = 0; i < width/tileDimesion; i++ ){
-            for( int j = 0; j < height/tileDimesion; j++ ){
+        for( int i = 0; i < dim_i; i++ ){
+            for( int j = 0; j < dim_j; j++ ){
                 destination[i][j].w += tileDimesion;
                 destination[i][j].h += tileDimesion;
 
                 if( destination[i][j].x < destination[pos_i][pos_j].x ){ //go left
                     destination[i][j].x = destination[pos_i][pos_j].x - destination[i][j].w * (pos_i - i);
-                    if( destination[i][j].x + destination[i][j].w  <= 0 ){ // is on screen?
-                        render_first_index_x = i + 1;
-                    }
                 }else if( destination[i][j].x > destination[pos_i][pos_j].x ){ //go right
                     destination[i][j].x = destination[pos_i][pos_j].x + destination[i][j].w * (i - pos_i);
-                    if( destination[i][j].x < width ){ // is on screen?
-                        render_last_index_x = i;
-                    }
                 }
                 
                 if( destination[i][j].y < destination[pos_i][pos_j].y ){ //go up
                     destination[i][j].y = destination[pos_i][pos_j].y - destination[i][j].h * (pos_j - j);
-                    if( destination[i][j].y + destination[i][j].h  <= 0 ){ // is on screen?
-                        render_first_index_y = j + 1;
-                    }
                 }else if( destination[i][j].y > destination[pos_i][pos_j].y ){ //go down
                     destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
-                    if( destination[i][j].y < height ){ // is on screen?
-                        render_last_index_y = j;
-                    }
                 }
 
                 //zoom in entity
@@ -176,47 +173,38 @@ void Core::zoomIn( int x, int y ){
                 }
             }
         }
+
+        updateVisiblesIndex();
     }
-    printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
+    //printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
 }
 
 void Core::zoomOut( int x, int y ){
     int pos_x, pos_y;
-    printf("Zoom Out\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
-    if( zoomLevel > 1 ){
+    //printf("Zoom Out\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
+
+    if( zoomLevel > 0 ){
         //pos[0] is the x value, pos[1] is the y
         int *pos = pointOfClick(x, y);
         int pos_i = pos[0];
         int pos_j = pos[1];
         free(pos);
 
-        for( int i = 0; i < width/tileDimesion; i++ ){
-            for( int j = 0; j < height/tileDimesion; j++ ){
+        for( int i = 0; i < dim_i; i++ ){
+            for( int j = 0; j < dim_j; j++ ){
                 destination[i][j].w -= tileDimesion;
                 destination[i][j].h -= tileDimesion;
 
                 if( destination[i][j].x < destination[pos_i][pos_j].x ){ //dezoom left
                     destination[i][j].x = destination[pos_i][pos_j].x - destination[i][j].w * (pos_i - i);
-                    if( destination[i][j].x + destination[i][j].w  <= 0 ){ // is on screen?
-                        render_first_index_x = i - 1;
-                    }
                 }else if( destination[i][j].x > destination[pos_i][pos_j].x ){  //dezoom right
                     destination[i][j].x = destination[pos_i][pos_j].x + destination[i][j].w * (i - pos_i);
-                    if( destination[i][j].x >= width ){ // is on screen?
-                        render_last_index_x = i;
-                    }
                 }
                 
                 if( destination[i][j].y < destination[pos_i][pos_j].y ){ //dezoom up
                     destination[i][j].y = destination[pos_i][pos_j].y - destination[i][j].h * (pos_j - j);
-                    if( destination[i][j].y + destination[i][j].h  <= 0 ){ // is on screen?
-                        render_first_index_y = j - 1;
-                    }
                 }else if( destination[i][j].y > destination[pos_i][pos_j].y ){ //dezoom down
                     destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
-                    if( destination[i][j].y >= height ){ // is on screen?
-                        render_last_index_y = j;
-                    }
                 }    
 
                 //zoom out entity
@@ -228,50 +216,72 @@ void Core::zoomOut( int x, int y ){
                 }            
             }
         }
-
         zoomLevel--;
-    }else if( zoomLevel == 1 ){ //for fixing dezoom bug
-        render_first_index_x = 0;
-        render_first_index_y = 0;
-        render_last_index_x =  width/tileDimesion - 1;
-        render_last_index_y = height/tileDimesion -1;
-        for( int i = 0; i < width/tileDimesion; i++ ){
-            for( int j = 0; j < height/tileDimesion; j++ ){
-                destination[i][j].w = tileDimesion;
-                destination[i][j].h = tileDimesion;
-                destination[i][j].x = i * tileDimesion;
-                destination[i][j].y = j * tileDimesion;
 
-                if( entities[i][j] != nullptr ){
-                    pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
-                    pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
-                    entities[i][j]->updateDimension( destination[i][j].w*3/4 );
-                    entities[i][j]->updatePosition( pos_x, pos_y );
+        //the tiles are bad positioned? Fix it
+        bool outOfIndex_x, outOfIndex_y;
+        int change_x = 0, change_y = 0;
+
+        if( destination[0][0].x > 0 ){
+            outOfIndex_x = true;
+            change_x = - destination[0][0].x;
+            //printf("X out of index\n");
+        }
+        if( destination[0][0].y > 0 ){
+            outOfIndex_y = true;
+            change_y = - destination[0][0].y;
+            //printf("Y out of index\n");
+        }
+        if( destination[dim_i - 1][dim_j - 1].x + destination[dim_i - 1][dim_j - 1].w < width ){
+            outOfIndex_x = true;
+            change_x = width - ( destination[dim_i - 1][dim_j - 1].x + destination[dim_i - 1][dim_j - 1].w );
+            //printf("X out of index %d\n", change_x);
+        }
+        if( destination[dim_i - 1][dim_j - 1].y + destination[dim_i - 1][dim_j - 1].h < height ){
+            outOfIndex_y = true;
+            change_y = height - ( destination[dim_i - 1][dim_j - 1].y + destination[dim_i - 1][dim_j - 1].h );
+            //printf("Y out of index\n");
+        }
+        //fix the positions
+        if( outOfIndex_x || outOfIndex_y ){
+            for( int i = 0; i < dim_i; i++ ){
+                for( int j = 0; j < dim_j; j++ ){
+                    destination[i][j].x += change_x;
+                    destination[i][j].y += change_y;
+
+                    //update entity positions
+                    if( entities[i][j] != nullptr ){
+                        pos_x = destination[i][j].x + ((destination[i][j].w)-(destination[i][j].w*3/4))/2;
+                        pos_y = destination[i][j].y + ((destination[i][j].h)-(destination[i][j].h*3/4))/2;
+                        entities[i][j]->updatePosition( pos_x, pos_y );
+                    }
                 }
             }
         }
-        zoomLevel--;
+
+        updateVisiblesIndex();
+
     }
-    printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
+    //printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
 }
 
 void Core::moveMap( int x_move, int y_move ){
-    printf("Move\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
+    //printf("Move\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
     int pos_x, pos_y;
     if( destination[0][0].x + x_move > 0 ){ //i can't go more to left
         x_move = - destination[0][0].x;
     }
-    if( destination[width/tileDimesion - 1][height/tileDimesion - 1].x + destination[width/tileDimesion - 1][height/tileDimesion - 1].w <= width - x_move ){ //i can't go more to right
-        x_move = width - destination[width/tileDimesion - 1][height/tileDimesion - 1].x - destination[width/tileDimesion - 1][height/tileDimesion - 1].w;
+    if( destination[dim_i - 1][dim_j - 1].x + destination[dim_i - 1][dim_j - 1].w <= width - x_move ){ //i can't go more to right
+        x_move = width - destination[dim_i - 1][dim_j - 1].x - destination[dim_i - 1][dim_j - 1].w;
     }
     if( destination[0][0].y + y_move > 0 ){ //i can't go more up
         y_move = - destination[0][0].y;
     }
-    if( destination[width/tileDimesion - 1][height/tileDimesion - 1].y + destination[width/tileDimesion - 1][height/tileDimesion - 1].h <= height - y_move ){ //i can't go more down
-        y_move = height - destination[height/tileDimesion - 1][height/tileDimesion - 1].y - destination[width/tileDimesion - 1][height/tileDimesion - 1].h;
+    if( destination[dim_i - 1][dim_j - 1].y + destination[dim_i - 1][dim_j - 1].h <= height - y_move ){ //i can't go more down
+        y_move = height - destination[dim_j - 1][dim_j - 1].y - destination[dim_i - 1][dim_j - 1].h;
     }
-    for( int i = 0; i < width/tileDimesion; i++ ){
-        for( int j = 0; j < height/tileDimesion; j++ ){
+    for( int i = 0; i < dim_i; i++ ){
+        for( int j = 0; j < dim_j; j++ ){
             destination[i][j].x += x_move;
             destination[i][j].y += y_move;
             //move entities
@@ -282,40 +292,68 @@ void Core::moveMap( int x_move, int y_move ){
             }
         }
     }
-    //update render index   
-    //left 
-    if( destination[render_first_index_x][0].x > 0 ){
-        render_first_index_x--;
-    }else if( destination[render_first_index_x][0].x + destination[render_first_index_x][0].w < 0 ){
-        render_first_index_x++;
+
+    updateVisiblesIndex();
+
+    //printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
+}
+
+bool Core::isOnTopOfTheScreen( int i, int j ){
+    if( ( destination[i][j].x + destination[i][j].w > 0 ) ||  //the x is on screen?
+        ( destination[i][j].y + destination[i][j].h > 0 ) ){ //the y is on screen?
+        return true;
     }
-    //up
-    if( destination[0][render_first_index_y].y > 0 ){
-        render_first_index_y--;
-    }else if( destination[0][render_first_index_y].y + destination[0][render_first_index_y].h < 0 ){
-        render_first_index_y++;
+    return false;
+}
+
+bool Core::isOnBottomOfTheScreen( int i, int j ){
+    if( ( destination[i][j].x < width ) ||  //the x is on screen?
+        ( destination[i][j].y < height ) ){ //the y is on screen?
+        return true;
     }
-    //right
-    if( destination[render_last_index_x][0].x + destination[render_last_index_x][0].w < width ){
-        render_last_index_x++;
-    }else if( destination[render_last_index_x][0].x > width ){
-        render_last_index_x--;
+    return false;
+}
+
+void Core::updateVisiblesIndex(){
+    for( int i = 0; i < dim_i; i++ ){
+        for( int j = 0; j < dim_j; j++ ){
+            //update first index
+            if( isOnTopOfTheScreen( i, j ) ){
+                if( render_first_index_x > i ){
+                    render_first_index_x = i;
+                }
+                if( render_first_index_y > j ){
+                    render_first_index_y = j;
+                }
+            }else{
+                render_first_index_x = i + 1;
+                render_first_index_y = j + 1;
+            }
+            //update last index
+            if( isOnBottomOfTheScreen( i, j ) ){
+                if( render_last_index_x < i ){
+                    render_last_index_x = i;
+                }
+                if( render_last_index_y < j ){
+                    render_last_index_y = j;
+                }
+            }else{
+                render_last_index_x = i - 1;
+                render_last_index_y = j - 1;
+            }
+        }
     }
-    //down
-    printf("%d %d %d %d\n", destination[0][render_last_index_y].y, destination[0][render_last_index_y].h, destination[0][render_last_index_y].y+destination[0][render_last_index_y].h, height);
-    if( destination[0][render_last_index_y].y + destination[0][render_last_index_y].h < height ){
-        render_last_index_y++;
-    }else if( destination[0][render_last_index_y].y > height ){
-        render_last_index_y--;
-    }
-    printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
 }
 
 Core::~Core(){
-    for( int i = 0; i < width/tileDimesion; i++ ){
+    for( int i = 0; i < dim_i; i++ ){
         free(destination[i]);
+        free(entities[i]);
+        free(typeOfTile[i]);
     }
     free(destination);
+    free(entities);
+    free(typeOfTile);
     for( int i = 0; i < 4; i++ ){
         free(tiles[i]);
     }

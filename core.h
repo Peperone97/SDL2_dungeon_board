@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <stdlib.h>
+#include <time.h>
 #include "texture.h"
 #include "entity.h"
 
@@ -19,7 +20,8 @@ public:
     void moveMap( int x_move, int y_move );
 private:
     int width, height, tileDimesion, zoomLevel;
-    int pos_i, pos_j;
+    int dim_i, dim_j;
+    int **typeOfTile;
     Entity ***entities;
     SDL_Rect **destination;
     SDL_Renderer *renderer;
@@ -30,6 +32,9 @@ private:
 
     void repositioning( int newDim, int pos_i, int pos_j );
     int* pointOfClick( int x, int y );
+    void updateVisiblesIndex();
+    bool isOnTopOfTheScreen( int i, int j );
+    bool isOnBottomOfTheScreen( int i, int j );
 };
 
 #endif
