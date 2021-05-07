@@ -44,27 +44,27 @@ Core::Core( int width, int height, int tileDimension, SDL_Renderer *renderer ){
         tiles[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
     }
     //first tile
-    tiles[0]->x = 161;
-    tiles[0]->y = 1;
+    tiles[0]->x = 0;
+    tiles[0]->y = 0;
     tiles[0]->w = 38;
     tiles[0]->h = 38;
     //second tile
-    tiles[1]->x = 201;
-    tiles[1]->y = 1;
+    tiles[1]->x = 38;
+    tiles[1]->y = 0;
     tiles[1]->w = 38;
     tiles[1]->h = 38;
     //third tile
-    tiles[2]->x = 241;
-    tiles[2]->y = 1;
+    tiles[2]->x = 76;
+    tiles[2]->y = 0;
     tiles[2]->w = 38;
     tiles[2]->h = 38;
     //fourth tile
-    tiles[3]->x = 161;
-    tiles[3]->y = 41;
+    tiles[3]->x = 114;
+    tiles[3]->y = 0;
     tiles[3]->w = 38;
     tiles[3]->h = 38;
 
-    texture = new Texture( "img/floor.png", renderer );
+    texture = new Texture( "img/sprites.png", renderer );
 }
 
 void Core::render(){
@@ -101,9 +101,10 @@ void Core::handleEvent( int x, int y ){
     if( entities[pos[0]][pos[1]] == nullptr ){
         int pos_x = destination[pos[0]][pos[1]].x + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
         int pos_y = destination[pos[0]][pos[1]].y + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
-        entities[pos[0]][pos[1]] = new Entity( "img/skeletons2.png", renderer );
+        entities[pos[0]][pos[1]] = new Entity( "img/sprites.png", renderer );
         entities[pos[0]][pos[1]]->addEntity( destination[0][0].w*3/4, pos_x, pos_y );
     }else{
+
         delete entities[pos[0]][pos[1]];
         entities[pos[0]][pos[1]] = nullptr;
     }

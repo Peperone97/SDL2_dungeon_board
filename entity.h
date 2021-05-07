@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include "texture.h"
+#include "timer.h"
 
 #ifndef ENTITY
 #define ENTITY
@@ -19,6 +20,7 @@ private:
     SDL_Rect *entity[2];
     SDL_Rect *position;
     Texture *texture;
+    Timer timer;
 };
 
 #endif

@@ -10,15 +10,15 @@ Entity::Entity( const char* path, SDL_Renderer *renderer ){
     entity[0] = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
     entity[1] = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
     //
-    entity[0]->x = 22;
-    entity[0]->y = 19;
-    entity[0]->w = 72;
-    entity[0]->h = 64;
+    entity[0]->x = 0;
+    entity[0]->y = 39;
+    entity[0]->w = 49;
+    entity[0]->h = 46;
     //
-    entity[1]->x = 106;
-    entity[1]->y = 15;
-    entity[1]->w = 64;
-    entity[1]->h = 68;
+    entity[1]->x = 49;
+    entity[1]->y = 39;
+    entity[1]->w = 43;
+    entity[1]->h = 46;
     
 }
 
@@ -34,10 +34,13 @@ void Entity::render(){
 }
 
 void Entity::update(){
-    if( sprite == 0 ){
-        sprite = 1;
-    }else{
-        sprite = 0;
+    timer.start();
+    if( timer.getPassedTime() % 200 ){ //update every 200 milliseconds
+        if( sprite == 0 ){
+            sprite = 1;
+        }else{
+            sprite = 0;
+        }
     }
 }
 

@@ -17,7 +17,7 @@ Window::Window::Window( const char *title, int width, int height ){
 
     SDL_SetRenderDrawColor( renderer, 120, 120, 120, 255 );
 
-    core = new Core( width, height, 50, renderer );
+    core = new Core( width, height, 90, renderer );
 
 }
 

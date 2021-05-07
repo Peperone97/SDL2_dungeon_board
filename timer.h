@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <stdio.h>
 
 #ifndef TIMER
 #define TIMER
@@ -8,8 +9,11 @@ public:
     Timer();
     ~Timer();
     int getPassedTime();
+    void start();
+    void reset();
 private:
     int startTime;
+    bool started;
 };
 
 #endif
