@@ -7,7 +7,7 @@ $(RES): $(OBJ)
 	g++ $(LIBS) $(OBJ) -o $(RES)
 
 main.o: main.cpp window.h
-window.o: window.cpp window.h core.h menu.h
+window.o: window.cpp window.h core.h
 texture.o: texture.cpp texture.h
 core.o: core.cpp core.h texture.h entity.h map.h
 menu.o: menu.cpp menu.h texture.h
