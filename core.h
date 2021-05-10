@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
+//#include "SDL2/include/SDL.h"
 #include <stdlib.h>
 #include <time.h>
 #include "texture.h"
 #include "entity.h"
+#include "map.h"
 
 #ifndef CORE
 #define CORE
@@ -18,10 +20,11 @@ public:
     void zoomIn( int x, int y );
     void zoomOut( int x, int y );
     void moveMap( int x_move, int y_move );
+    void createNewDungeon();
 private:
     int width, height, tileDimesion, zoomLevel;
     int dim_i, dim_j; //dimension of matrix
-    int **typeOfTile;
+    int **typeOfTile, **map;
     Entity ***entities;
     SDL_Rect **destination; //the matrix of floor tiles
     SDL_Renderer *renderer;

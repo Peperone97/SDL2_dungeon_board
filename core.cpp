@@ -15,11 +15,16 @@ Core::Core( int width, int height, int tileDimension, SDL_Renderer *renderer ){
     destination = (SDL_Rect**)malloc( sizeof(SDL_Rect*) * (dim_i) );
     entities = (Entity***)malloc( sizeof(Entity**) * (dim_i) );
     typeOfTile = (int**)malloc( sizeof(int*) * (dim_i) );
+    map = (int**)malloc( sizeof(int*) * (dim_i) );
     for( int i = 0; i < dim_i; i++ ){
         destination[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) * (dim_j) );
         entities[i] = (Entity**)malloc( sizeof(Entity*) * (dim_j) );
         typeOfTile[i] = (int*)malloc( sizeof(int) * (dim_j) );
+        map[i] = (int*)malloc( sizeof(int) * (dim_j) );
     }
+    
+    //create the map
+    createMap( map, dim_i );
 
     for( int i = 0; i < dim_i; i++ ){
         for( int j = 0; j < dim_j; j++ ){
@@ -43,6 +48,7 @@ Core::Core( int width, int height, int tileDimension, SDL_Renderer *renderer ){
     for( int i = 0; i < 4; i++ ){
         tiles[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
     }
+
     //first tile
     tiles[0]->x = 0;
     tiles[0]->y = 0;
@@ -65,18 +71,19 @@ Core::Core( int width, int height, int tileDimension, SDL_Renderer *renderer ){
     tiles[3]->h = 38;
 
     texture = new Texture( "img/sprites.png", renderer );
+
 }
 
 void Core::render(){
     int i = 0, j = 0;
-    //printf("Tiles:\n");
     for( i = render_first_index_x; i <= render_last_index_x; i++ ){
         for( j = render_first_index_y; j <= render_last_index_y; j++ ){
-            texture->render( renderer, tiles[typeOfTile[i][j]], &destination[i][j] );
-            if( entities[i][j] != nullptr ){
-                entities[i][j]->render();
+            if( map[i][j] ){
+                texture->render( renderer, tiles[typeOfTile[i][j]], &destination[i][j] );
+                if( entities[i][j] != nullptr ){
+                    entities[i][j]->render();
+                }
             }
-            //printf("%d, %d\n", i, j);
         }
     }
 }
@@ -98,15 +105,17 @@ void Core::handleEvent( int x, int y ){
     //pos[0] is the x value, pos[1] is the y
     int *pos = pointOfClick(x, y); // find the tile where click is append
 
-    if( entities[pos[0]][pos[1]] == nullptr ){
-        int pos_x = destination[pos[0]][pos[1]].x + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
-        int pos_y = destination[pos[0]][pos[1]].y + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
-        entities[pos[0]][pos[1]] = new Entity( "img/sprites.png", renderer );
-        entities[pos[0]][pos[1]]->addEntity( destination[0][0].w*3/4, pos_x, pos_y );
-    }else{
-
-        delete entities[pos[0]][pos[1]];
-        entities[pos[0]][pos[1]] = nullptr;
+    if( map[pos[0]][pos[1]] ){
+        printf("%d, %d\n", pos[0], pos[1]);
+        if( entities[pos[0]][pos[1]] == nullptr ){
+            int pos_x = destination[pos[0]][pos[1]].x + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
+            int pos_y = destination[pos[0]][pos[1]].y + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
+            entities[pos[0]][pos[1]] = new Entity( "img/sprites.png", renderer );
+            entities[pos[0]][pos[1]]->addEntity( destination[0][0].w*3/4, pos_x, pos_y );
+        }else{
+            delete entities[pos[0]][pos[1]];
+            entities[pos[0]][pos[1]] = nullptr;
+        }
     }
 
     free(pos);
@@ -138,7 +147,6 @@ int* Core::pointOfClick( int x, int y ){ // find the i and j with linear search
 
 void Core::zoomIn( int x, int y ){
     //pos[0] is the x value, pos[1] is the y
-    //printf("Zoom in\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
     int *pos = pointOfClick(x, y);
     int pos_i = pos[0];
     int pos_j = pos[1];
@@ -177,13 +185,11 @@ void Core::zoomIn( int x, int y ){
 
         updateVisiblesIndex();
     }
-    //printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
 }
 
 void Core::zoomOut( int x, int y ){
     int pos_x, pos_y;
-    //printf("Zoom Out\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
-
+    
     if( zoomLevel > 0 ){
         //pos[0] is the x value, pos[1] is the y
         int *pos = pointOfClick(x, y);
@@ -226,22 +232,18 @@ void Core::zoomOut( int x, int y ){
         if( destination[0][0].x > 0 ){
             outOfIndex_x = true;
             change_x = - destination[0][0].x;
-            //printf("X out of index\n");
         }
         if( destination[0][0].y > 0 ){
             outOfIndex_y = true;
             change_y = - destination[0][0].y;
-            //printf("Y out of index\n");
         }
         if( destination[dim_i - 1][dim_j - 1].x + destination[dim_i - 1][dim_j - 1].w < width ){
             outOfIndex_x = true;
             change_x = width - ( destination[dim_i - 1][dim_j - 1].x + destination[dim_i - 1][dim_j - 1].w );
-            //printf("X out of index %d\n", change_x);
         }
         if( destination[dim_i - 1][dim_j - 1].y + destination[dim_i - 1][dim_j - 1].h < height ){
             outOfIndex_y = true;
             change_y = height - ( destination[dim_i - 1][dim_j - 1].y + destination[dim_i - 1][dim_j - 1].h );
-            //printf("Y out of index\n");
         }
         //fix the positions
         if( outOfIndex_x || outOfIndex_y ){
@@ -263,11 +265,9 @@ void Core::zoomOut( int x, int y ){
         updateVisiblesIndex();
 
     }
-    //printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
 }
 
 void Core::moveMap( int x_move, int y_move ){
-    //printf("Move\n%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
     int pos_x, pos_y;
     if( destination[0][0].x + x_move > 0 ){ //i can't go more to left
         x_move = - destination[0][0].x;
@@ -295,8 +295,6 @@ void Core::moveMap( int x_move, int y_move ){
     }
 
     updateVisiblesIndex();
-
-    //printf("%d, %d, %d, %d\n", render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y);
 }
 
 bool Core::isOnTopOfTheScreen( int i, int j ){
@@ -346,15 +344,21 @@ void Core::updateVisiblesIndex(){
     }
 }
 
+void Core::createNewDungeon(){
+    createMap( map, dim_i );
+}
+
 Core::~Core(){
     for( int i = 0; i < dim_i; i++ ){
         free(destination[i]);
         free(entities[i]);
         free(typeOfTile[i]);
+        free(map[i]);
     }
     free(destination);
     free(entities);
     free(typeOfTile);
+    free(map);
     for( int i = 0; i < 4; i++ ){
         free(tiles[i]);
     }

@@ -4,6 +4,7 @@ Window::Window::Window( const char *title, int width, int height ){
     this->width = width;
     this->height = height;
     slide = false;
+    ctrl_combination = false;
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 ){throw "Can't init SDL2";}  
 
@@ -15,9 +16,11 @@ Window::Window::Window( const char *title, int width, int height ){
     renderer = SDL_CreateRenderer( window, -1, 0 );
     if( renderer == NULL ){throw "Can't init SDL renderer";}
 
-    SDL_SetRenderDrawColor( renderer, 120, 120, 120, 255 );
+    //SDL_SetRenderDrawColor( renderer, 120, 120, 120, 255 );
 
-    core = new Core( width, height, 90, renderer );
+    //initialMenu = new Menu( 0, 0, 0, 0, "prv");
+
+    core = new Core( width, height, height/40, renderer );
 
 }
 
@@ -76,31 +79,43 @@ void Window::Window::eventManager(){
             if( e.type == SDL_QUIT ){
                 quit = true;
             }else{
-                if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT ){
+                if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT ){ //click on map
                     int x, y;
                     SDL_GetMouseState( &x, &y );
                     core->handleEvent( x, y );
                     
                     draw = true;
                 }
-                if( e.type == SDL_MOUSEWHEEL ){
+                if( e.type == SDL_MOUSEWHEEL ){ //zoom
                     int x, y;
                     SDL_GetMouseState( &x, &y );
-                    if( e.wheel.y > 0){
+                    if( e.wheel.y > 0){ //in
                         core->zoomIn( x, y );
-                    }else{
+                    }else{ //out
                         core->zoomOut( x, y );
                     }
 
                     draw = true;
                 }
-                if( e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_RIGHT){
+                if( e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_RIGHT){ //start slide
                     SDL_GetMouseState( &previous_x, &previous_y );
                     slide = true;
                 }
-                if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_RIGHT){
+                if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_RIGHT){ //stop slide
                     slide = false;
                 }
+                //create a new dungeon ctrl+n
+                if( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LCTRL ){
+                    ctrl_combination = true;
+                }
+                if( e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_LCTRL ){
+                    ctrl_combination = false;
+                }
+                if( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_n ){
+                    core->createNewDungeon();
+                    draw = true;
+                }
+
                 if(e.key.type == SDL_KEYDOWN){
                     switch(e.key.keysym.sym){
                         case SDLK_w:
