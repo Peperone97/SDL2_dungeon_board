@@ -1,5 +1,5 @@
 CC=g++
-OBJ=main.o window.o texture.o entity.o core.o timer.o menu.o map.o #new_core.o
+OBJ=main.o window.o texture.o entity.o core.o timer.o map.o #new_core.o
 LIBS=`pkg-config --libs --cflags sdl2` -lSDL2_image
 RES=program
 
