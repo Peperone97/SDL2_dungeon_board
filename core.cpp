@@ -226,7 +226,7 @@ void Core::zoomOut( int x, int y ){
         zoomLevel--;
 
         //the tiles are bad positioned? Fix it
-        bool outOfIndex_x, outOfIndex_y;
+        bool outOfIndex_x = 0, outOfIndex_y = 0;
         int change_x = 0, change_y = 0;
 
         if( destination[0][0].x > 0 ){
