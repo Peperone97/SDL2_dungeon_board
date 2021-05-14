@@ -1,6 +1,6 @@
 #ifdef _APPLE_
 
-#inclde <stdio.h>
+#include <stdio.h>
     
 int main() {
     printf("Unknown error :(\n");
