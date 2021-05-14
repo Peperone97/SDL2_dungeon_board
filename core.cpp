@@ -188,7 +188,7 @@ void Core::zoomIn( int x, int y ){
                     }
                 }
             }
-            SDL_Delay(3);
+            SDL_Delay(5);
         } while( destination[0][0].w != zoomRes );
         updateVisiblesIndex();
     }
@@ -235,7 +235,7 @@ void Core::zoomOut( int x, int y ){
                     }
                 }
             }
-            SDL_Delay(3);
+            SDL_Delay(5);
         }while(destination[0][0].w != zoomRes);
         zoomLevel--;
 
@@ -369,6 +369,14 @@ void Core::updateVisiblesIndex(){
 }
 
 void Core::createNewDungeon(){
+    for( int i = 0; i < dim_i; i++ ){
+        for( int j = 0; j < dim_j; j++ ){
+            if( entities[i][j] != nullptr ){
+                delete entities[i][j];
+                entities[i][j] = nullptr;
+            }
+        }
+    }
     createMap( map, dim_i );
 }
 
