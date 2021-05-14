@@ -1,5 +1,11 @@
+#ifdef _WIN32
+    #include <SDL.h>
+#endif
+#ifdef  _unix
+    #include <SDL2/SDL.h>
+#endif
 //#include "SDL2/include/SDL.h"
-#include <SDL2/SDL.h>
+
 #include <stdio.h>
 
 #ifndef TIMER
@@ -9,11 +15,11 @@ class Timer{
 public:
     Timer();
     ~Timer();
-    int getPassedTime();
     void start();
+    double getPassedTime();
     void reset();
 private:
-    int startTime;
+    double startTime;
     bool started;
 };
 

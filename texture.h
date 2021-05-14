@@ -1,6 +1,13 @@
+#ifdef _WIN32
+    #include <SDL.h>
+    #include <SDL_image.h>
+#endif
+#ifdef  _unix
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_image.h>
+#endif
+
 //#include "SDL2/include/SDL.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
 #ifndef TEXTURE
 #define TEXTURE

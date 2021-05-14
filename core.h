@@ -1,8 +1,15 @@
-#include <stdio.h>
-#include <SDL2/SDL.h>
+#ifdef _WIN32
+    #include <SDL.h>
+#endif
+#ifdef  _unix
+    #include <SDL2/SDL.h>
+#endif
 //#include "SDL2/include/SDL.h"
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "texture.h"
 #include "entity.h"
 #include "map.h"
@@ -38,6 +45,7 @@ private:
     void updateVisiblesIndex();
     bool isOnTopOfTheScreen( int i, int j );
     bool isOnBottomOfTheScreen( int i, int j );
+    bool isVisible( int i, int j );
 };
 
 #endif

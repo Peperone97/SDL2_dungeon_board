@@ -8,14 +8,13 @@ Timer::Timer(){
 
 void Timer::start(){
     if( !started ){
-        started = true;
         startTime = SDL_GetTicks();
+        started = true;
     }
 }
 
-int Timer::getPassedTime(){
-    //printf("%d\n", SDL_GetTicks() - startTime);
-    return (SDL_GetTicks() / startTime);
+double Timer::getPassedTime(){
+    return SDL_GetTicks() - startTime;
 }
 
 Timer::~Timer(){}

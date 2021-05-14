@@ -6,7 +6,7 @@ Window::Window::Window( const char *title, int width, int height ){
     slide = false;
     ctrl_combination = false;
 
-    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 ){throw "Can't init SDL2";}  
+    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS ) < 0 ){throw "Can't init SDL2";}
 
     window = SDL_CreateWindow( title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_HIDDEN );    
     if( window == NULL ){throw "Can't init SDL window";}
@@ -32,22 +32,24 @@ void Window::Window::run(){
     quit = false;
     slide = false;
     draw = false;
-    input_thread = SDL_CreateThread( (SDL_ThreadFunction)Window::event_wrapper, "input", this );
+    //input_thread = SDL_CreateThread( (SDL_ThreadFunction)Window::event_wrapper, "input", this );
     update_thread = SDL_CreateThread( (SDL_ThreadFunction)Window::update_wrapper, "update", this );
+    render_thread = SDL_CreateThread((SDL_ThreadFunction)Window::render_wrapper, "render", this);
     do{
 
-        render();
-        SDL_Delay( SECOND / FPS );
+        eventManager();
 
     }while( !quit );
 }
 
 void Window::Window::render(){
-    //if( draw ){ //render only if is an update
-    SDL_RenderClear( renderer );
-    core->render();
-    //}
-    SDL_RenderPresent( renderer );
+    do {
+        SDL_RenderClear(renderer);
+        core->render();
+        SDL_RenderPresent(renderer);
+
+        SDL_Delay(SECOND / FPS);
+    }while( !quit );
 }
 
 void Window::Window::update(){
@@ -61,7 +63,7 @@ void Window::Window::update(){
         }
 
         core->update();
-        SDL_Delay( 100 ); //milliseconds
+        SDL_Delay( 1 ); //milliseconds
     }while( !quit );
 }
 
@@ -77,9 +79,11 @@ void Window::Window::eventManager(){
     do{
         while( SDL_PollEvent( &e ) != 0){
             if( e.type == SDL_QUIT ){
+                //printf("Quit\n");
                 quit = true;
             }else{
                 if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT ){ //click on map
+                    //printf("Click\n");
                     int x, y;
                     SDL_GetMouseState( &x, &y );
                     core->handleEvent( x, y );
@@ -158,10 +162,16 @@ void Window::Window::eventManager(){
                 }
             }
         }
-        SDL_Delay( 100 ); //milliseconds
+        SDL_Delay( 1 ); //milliseconds
     }while( !quit );
 }
 
 Window::Window::~Window(){
     close();
+}
+
+void Window::Window::prv() {
+    do {
+        printf("%d\n", slide);
+    }while( !quit );
 }

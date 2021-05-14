@@ -1,9 +1,15 @@
+#ifdef _WIN32
+    #include <SDL.h>
+#endif
+#ifdef  _unix
+    #include <SDL2/SDL.h>
+#endif
+//#include "SDL2/include/SDL.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <exception>
-#include <SDL2/SDL.h>
-//#include "SDL2/include/SDL.h"
-#include <SDL2/SDL_image.h>
+#include <SDL.h>
 
 #include "core.h"
 //#include "new_core.h"
@@ -12,7 +18,7 @@
 #ifndef WINDOW
 #define WINDOW
 
-#define FPS 10
+#define FPS 30
 #define SECOND 1000
  
 
@@ -31,12 +37,15 @@ namespace Window{
         SDL_Renderer *renderer;
         SDL_Texture *texture;
         SDL_Event e;
-        SDL_Thread *input_thread, *update_thread;
+        SDL_Thread *input_thread, *update_thread, *render_thread;
 
         Core *core;
         
         static void event_wrapper( void* obj ){
             static_cast<Window*>(obj)->eventManager();
+        }
+        static void render_wrapper( void* obj ){
+            static_cast<Window*>(obj)->render();
         }
         static void update_wrapper( void *obj ){
             static_cast<Window*>(obj)->update();
@@ -45,7 +54,7 @@ namespace Window{
         void update();
         void eventManager();
         void close();
-        void provaNonStatica();
+        void prv();
 
     };
 }

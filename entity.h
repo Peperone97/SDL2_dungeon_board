@@ -1,6 +1,14 @@
+#ifdef _WIN32
+    #include <SDL.h>
+#endif
+#ifdef  _unix
+    #include <SDL2/SDL.h>
+#endif
 //#include "SDL2/include/SDL.h"
-#include <SDL2/SDL.h>
+
+#include <cmath>
 #include "texture.h"
+
 #include "timer.h"
 
 #ifndef ENTITY
@@ -21,7 +29,7 @@ private:
     SDL_Rect *entity[2];
     SDL_Rect *position;
     Texture *texture;
-    Timer timer;
+    Timer *timer;
 };
 
 #endif

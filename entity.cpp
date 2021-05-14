@@ -4,6 +4,7 @@ Entity::Entity( const char* path, SDL_Renderer *renderer ){
     sprite = 0;
     this->renderer = renderer;
     texture = new Texture( path, renderer );
+    timer = new Timer();
 
     position = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
 
@@ -34,8 +35,10 @@ void Entity::render(){
 }
 
 void Entity::update(){
-    timer.start();
-    if( timer.getPassedTime() % 200 ){ //update every 200 milliseconds
+    timer->start();
+    //printf("%f\t%f\n", timer->getPassedTime(), fmod(timer->getPassedTime(), 200));
+    int sec = fmod(timer->getPassedTime(), 100);
+    if( sec >= 0 && sec <= 1 ){
         if( sprite == 0 ){
             sprite = 1;
         }else{

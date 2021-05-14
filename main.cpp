@@ -1,3 +1,14 @@
+#ifdef _APPLE_
+
+#inclde <stdio.h>
+    
+int main() {
+    printf("Unknown error :(\n");
+    return 1;
+}
+
+#else
+
 #include <stdio.h>
 #include <exception>
 #include "window.h"
@@ -17,3 +28,5 @@ int main( int argc, char **argv ){
 
     return 0;
 }
+
+#endif
