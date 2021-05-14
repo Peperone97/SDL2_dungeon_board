@@ -1,15 +1,16 @@
 #ifdef _WIN32
     #include <SDL.h>
+    #include <SDL_image.h>
 #endif
-#ifdef  _unix
+#ifdef  unix
     #include <SDL2/SDL.h>
+    #include <SDL2/SDL_image.h>
 #endif
 //#include "SDL2/include/SDL.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <exception>
-#include <SDL.h>
 
 #include "core.h"
 //#include "new_core.h"

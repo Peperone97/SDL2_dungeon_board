@@ -1,7 +1,7 @@
 #ifdef _WIN32
     #include <SDL.h>
 #endif
-#ifdef  _unix
+#ifdef  unix
     #include <SDL2/SDL.h>
 #endif
 //#include "SDL2/include/SDL.h"
