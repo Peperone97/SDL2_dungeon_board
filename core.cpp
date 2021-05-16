@@ -50,6 +50,8 @@ Core::Core( int width, int height, int tileDimension, SDL_Renderer *renderer ){
         tiles[i] = (SDL_Rect*)malloc( sizeof(SDL_Rect) );
     }
 
+    text = new Phrase( "Pre-alpha 1.0", 4, 4, 100, 100, renderer );
+
     //first tile
     tiles[0]->x = 0;
     tiles[0]->y = 0;
@@ -89,6 +91,7 @@ void Core::render(){
             }
         }
     }
+    text->render( renderer );
 }
 void Core::update(){
     int i = 0, j = 0;

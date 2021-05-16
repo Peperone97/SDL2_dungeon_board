@@ -1,7 +1,7 @@
 #ifdef _WIN32
     #include <SDL.h>
 #endif
-#ifdef  unix
+#ifdef unix
     #include <SDL2/SDL.h>
 #endif
 //#include "SDL2/include/SDL.h"
@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "phrase.h"
 #include "texture.h"
 #include "entity.h"
 #include "map.h"
@@ -37,6 +38,7 @@ private:
     SDL_Renderer *renderer;
     SDL_Rect *tiles[4];
     Texture *texture;
+    Phrase *text;
     //render cordinates
     int render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y;
     

@@ -2,7 +2,7 @@
     #include <SDL.h>
     #include <SDL_image.h>
 #endif
-#ifdef  unix
+#ifdef unix
     #include <SDL2/SDL.h>
     #include <SDL2/SDL_image.h>
 #endif
@@ -15,6 +15,7 @@
 #include "core.h"
 //#include "new_core.h"
 #include "texture.h"
+#include "phrase.h"
 
 #ifndef WINDOW
 #define WINDOW
@@ -41,6 +42,7 @@ namespace Window{
         SDL_Thread *input_thread, *update_thread, *render_thread;
 
         Core *core;
+        Phrase *dinamicText;
         
         static void event_wrapper( void* obj ){
             static_cast<Window*>(obj)->eventManager();
@@ -56,6 +58,7 @@ namespace Window{
         void eventManager();
         void close();
         void prv();
+        void textInput();
 
     };
 }

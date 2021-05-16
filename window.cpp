@@ -16,11 +16,9 @@ Window::Window::Window( const char *title, int width, int height ){
     renderer = SDL_CreateRenderer( window, -1, 0 );
     if( renderer == NULL ){throw "Can't init SDL renderer";}
 
-    //SDL_SetRenderDrawColor( renderer, 120, 120, 120, 255 );
-
-    //initialMenu = new Menu( 0, 0, 0, 0, "prv");
-
     core = new Core( width, height, height/40, renderer );
+
+    dinamicText = new Phrase("", 4, 100, 200, 200, renderer);
 
 }
 
@@ -46,6 +44,7 @@ void Window::Window::render(){
     do {
         SDL_RenderClear(renderer);
         core->render();
+        dinamicText->render( renderer );
         SDL_RenderPresent(renderer);
 
         SDL_Delay(SECOND / FPS);
@@ -116,12 +115,28 @@ void Window::Window::eventManager(){
                     ctrl_combination = false;
                 }
                 if( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_n ){
-                    core->createNewDungeon();
+                    if( ctrl_combination ){
+                        core->createNewDungeon();
+                    }
                     draw = true;
                 }
-
+                //event text
                 if(e.key.type == SDL_KEYDOWN){
-                    switch(e.key.keysym.sym){
+                    if ( e.key.keysym.sym >= 'a' && e.key.keysym.sym <= 'z' || e.key.keysym.sym >= '0' && e.key.keysym.sym <= '9' ) {
+                        dinamicText->addCharacter( e.key.keysym.sym );
+                    }else if( e.key.keysym.sym == ' ' ){
+                        dinamicText->addCharacter( ' ' );
+                    }else if( e.key.keysym.sym == '.' ){
+                        dinamicText->addCharacter( '.' );
+                    }else if( e.key.keysym.sym == '-' ){
+                        dinamicText->addCharacter( '-' );
+                    }
+                    if( e.key.keysym.sym == SDLK_BACKSPACE ){
+                        dinamicText->removeLastCharacter();
+                    }else if( e.key.keysym.sym == SDLK_ESCAPE ){
+                        quit = true;
+                    }
+                    /*switch(e.key.keysym.sym){
                         case SDLK_w:
                             //update();
                             printf("W\n");
@@ -155,15 +170,23 @@ void Window::Window::eventManager(){
                             printf("Space\n");
                             //SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
                         break;
+                        case SDLK_BACKSPACE:
+                            printf("Remove\n");
+                            dinamicText->removeLastCharacter();
+                        break;
                         case SDLK_ESCAPE:
                             printf("Exit\n");
                             quit = true;
-                    }
+                    }*/
                 }
             }
         }
         SDL_Delay( 1 ); //milliseconds
     }while( !quit );
+}
+
+void Window::Window::textInput() {
+    
 }
 
 Window::Window::~Window(){
