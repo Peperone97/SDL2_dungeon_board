@@ -123,7 +123,9 @@ void Window::Window::eventManager(){
                 //event text
                 if(e.key.type == SDL_KEYDOWN){
                     if ( e.key.keysym.sym >= 'a' && e.key.keysym.sym <= 'z' || e.key.keysym.sym >= '0' && e.key.keysym.sym <= '9' ) {
-                        dinamicText->addCharacter( e.key.keysym.sym );
+                        if( !ctrl_combination ){
+                            dinamicText->addCharacter( e.key.keysym.sym );
+                        }
                     }else if( e.key.keysym.sym == ' ' ){
                         dinamicText->addCharacter( ' ' );
                     }else if( e.key.keysym.sym == '.' ){
