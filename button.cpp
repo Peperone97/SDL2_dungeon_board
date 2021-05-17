@@ -41,6 +41,6 @@ int Button::stringLen( const char *s ){
 }
 
 Button::~Button(){
-	delete button;
+	delete texture;
 	delete text;
 }
