@@ -48,13 +48,15 @@ bool isOnMap( struct room *room, int dim){
 }
 
 struct room initRoom( int dim ){
+    int room_max_dimension = dim*20/100;
+
     struct room *room = (struct room*)malloc( sizeof( struct room ) );
 
     do{
         room->x = rand()%(dim - ROOM_MIN_DISTANCE) + ROOM_MIN_DISTANCE;
         room->y = rand()%(dim - ROOM_MIN_DISTANCE) + ROOM_MIN_DISTANCE;
-        room->w = rand()%(MAX_ROOM_DIMENSION - MIN_ROOM_DIMENSION) + MIN_ROOM_DIMENSION;
-        room->h = rand()%(MAX_ROOM_DIMENSION - MIN_ROOM_DIMENSION) + MIN_ROOM_DIMENSION;
+        room->w = rand()%(room_max_dimension - MIN_ROOM_DIMENSION) + MIN_ROOM_DIMENSION;
+        room->h = rand()%(room_max_dimension - MIN_ROOM_DIMENSION) + MIN_ROOM_DIMENSION;
     }while( !isOnMap( room, dim ) );
 
     return *room;
@@ -66,7 +68,7 @@ struct room* createRooms( int** map, int dim, int *n_rooms ){
 
     do{
         *n_rooms = rand()%dim;  
-    }while( *n_rooms <= dim/7 || *n_rooms > dim/4 );
+    }while( *n_rooms <= dim*12/100 || *n_rooms >= dim*27/100 );
 
     struct room *rooms = (struct room*)malloc( sizeof(struct room) * (*n_rooms+1) );
 
@@ -137,22 +139,6 @@ void createCorridos( int **map, int dim, struct room *rooms, int n_rooms ){
                     }
                 }while( center_of_rooms[r][0] != center_of_rooms[room_to_connect][0] );
             }
-
-            /*do{
-                if( center_of_rooms[r][0] < center_of_rooms[room_to_connect][0] ){
-                    map[center_of_rooms[r][0]++][center_of_rooms[r][1]] = 1;
-                }
-                if( center_of_rooms[r][0] > center_of_rooms[room_to_connect][0] ){
-                    map[center_of_rooms[r][0]--][center_of_rooms[r][1]] = 1;
-                }
-                if( center_of_rooms[r][1] < center_of_rooms[room_to_connect][1] ){
-                    map[center_of_rooms[r][0]][center_of_rooms[r][1]++] = 1;
-                }
-                if( center_of_rooms[r][1] > center_of_rooms[room_to_connect][1] ){
-                    map[center_of_rooms[r][0]][center_of_rooms[r][1]--] = 1;
-                }
-
-            }while( center_of_rooms[r][0] != center_of_rooms[room_to_connect][0] || center_of_rooms[r][1] != center_of_rooms[room_to_connect][1] );*/
         }
     }
 
@@ -164,6 +150,8 @@ void createCorridos( int **map, int dim, struct room *rooms, int n_rooms ){
 }
 
 void createMap( int **map, int dim ){
+
+    //max_room_dimension = dim * 20/100;
 
     for( int i = 0; i < dim; i++ ){
         for( int j = 0; j < dim; j++ ){

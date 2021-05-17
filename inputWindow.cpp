@@ -58,14 +58,13 @@ void InputWindow::InputWindow::eventManager() {
                     if (e.key.keysym.sym >= 'a' && e.key.keysym.sym <= 'z' || e.key.keysym.sym >= '0' && e.key.keysym.sym <= '9') {
                         dinamicText->addCharacter(e.key.keysym.sym);
                     }
-                    else if (e.key.keysym.sym == ' ') {
-                        dinamicText->addCharacter(' ');
-                    }
-                    else if (e.key.keysym.sym == '.') {
-                        dinamicText->addCharacter('.');
-                    }
-                    else if (e.key.keysym.sym == '-') {
-                        dinamicText->addCharacter('-');
+                    if (e.key.keysym.scancode >= 89 && e.key.keysym.scancode <= 98) { //keypad
+                        if (e.key.keysym.scancode == 98) {
+                            dinamicText->addCharacter('0');
+                        }
+                        else { // 1 - 9
+                            dinamicText->addCharacter(e.key.keysym.scancode-40); // char 1 = int 49
+                        }
                     }
                     if (e.key.keysym.sym == SDLK_BACKSPACE) {
                         dinamicText->removeLastCharacter();
