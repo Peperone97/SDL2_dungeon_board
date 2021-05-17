@@ -4,7 +4,6 @@
 #endif
 #ifdef unix
     #include <SDL2/SDL.h>
-    #include <SDL2/SDL_image.h>
 #endif
 //#include "SDL2/include/SDL.h"
 
