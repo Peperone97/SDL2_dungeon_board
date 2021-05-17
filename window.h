@@ -12,53 +12,42 @@
 #include <stdlib.h>
 #include <exception>
 
+#include "baseWindow.h"
 #include "core.h"
-//#include "new_core.h"
 #include "texture.h"
 #include "phrase.h"
 
 #ifndef WINDOW
 #define WINDOW
-
-#define FPS 30
-#define SECOND 1000
  
 
 namespace Window{
-    class Window{
+    class Window : public BaseWindow{
     public:
-        Window( const char *title, int width, int height );
+        Window( const char *title, int width, int height, int numberOfTiles );
         ~Window();
-        void show();
         void run();
     private:
-        int width, height, previous_x, previous_y; //previous x/y used for slide the map
-        bool slide, draw, quit, ctrl_combination;
+        int previous_x, previous_y; //previous x/y used for slide the map
+        bool slide, draw, ctrl_combination;
 
-        SDL_Window *window;
-        SDL_Renderer *renderer;
-        SDL_Texture *texture;
         SDL_Event e;
-        SDL_Thread *input_thread, *update_thread, *render_thread;
+        SDL_Thread *update_thread, *render_thread;
 
         Core *core;
         Phrase *dinamicText;
         
-        static void event_wrapper( void* obj ){
-            static_cast<Window*>(obj)->eventManager();
-        }
         static void render_wrapper( void* obj ){
             static_cast<Window*>(obj)->render();
         }
         static void update_wrapper( void *obj ){
             static_cast<Window*>(obj)->update();
         }
+
         void render();
         void update();
         void eventManager();
         void close();
-        void prv();
-        void textInput();
 
     };
 }

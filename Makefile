@@ -1,13 +1,16 @@
 CC=g++
-OBJ=main.o window.o texture.o entity.o core.o timer.o map.o phrase.o #new_core.o
+OBJ=main.o baseWindow.o inputWindow.o errorWindow.o window.o texture.o entity.o core.o timer.o map.o phrase.o #new_core.o
 LIBS=`pkg-config --libs --cflags sdl2` -lSDL2_image
 RES=program
 
 $(RES): $(OBJ)
 	g++ $(LIBS) $(OBJ) -o $(RES)
 
-main.o: main.cpp window.h
-window.o: window.cpp window.h core.h phrase.h
+main.o: main.cpp window.h baseWindow.h inputWindow.h errorWindow.h
+baseWindow.o: baseWindow.cpp baseWindow.h
+inputWindow.o: inputWindow.cpp inputWindow.h baseWindow.h phrase.h
+errorWindow.o: errorWindow.cpp errorWindow.h baseWindow.h phrase.h
+window.o: window.cpp window.h core.h baseWindow.h phrase.h
 texture.o: texture.cpp texture.h
 core.o: core.cpp core.h texture.h entity.h map.h
 menu.o: menu.cpp menu.h texture.h

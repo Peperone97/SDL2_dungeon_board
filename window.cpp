@@ -1,36 +1,20 @@
 #include "window.h"
 
-Window::Window::Window( const char *title, int width, int height ){
-    this->width = width;
-    this->height = height;
+Window::Window::Window(const char* title, int width, int height, int numberOfTiles ) : BaseWindow( title, width, height ){
     slide = false;
     ctrl_combination = false;
 
-    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS ) < 0 ){throw "Can't init SDL2";}
-
-    window = SDL_CreateWindow( title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_HIDDEN );    
-    if( window == NULL ){throw "Can't init SDL window";}
-
-    if( IMG_Init( IMG_INIT_PNG ) < 0 ){throw "Can't init png";}
-
-    renderer = SDL_CreateRenderer( window, -1, 0 );
-    if( renderer == NULL ){throw "Can't init SDL renderer";}
-
-    core = new Core( width, height, height/40, renderer );
+    core = new Core( width, height, height/numberOfTiles, renderer );
 
     dinamicText = new Phrase("", 4, 100, 200, 200, renderer);
 
-}
-
-void Window::Window::show(){
-    SDL_ShowWindow( window );
 }
 
 void Window::Window::run(){
     quit = false;
     slide = false;
     draw = false;
-    //input_thread = SDL_CreateThread( (SDL_ThreadFunction)Window::event_wrapper, "input", this );
+    
     update_thread = SDL_CreateThread( (SDL_ThreadFunction)Window::update_wrapper, "update", this );
     render_thread = SDL_CreateThread((SDL_ThreadFunction)Window::render_wrapper, "render", this);
     do{
@@ -64,14 +48,6 @@ void Window::Window::update(){
         core->update();
         SDL_Delay( 1 ); //milliseconds
     }while( !quit );
-}
-
-void Window::Window::close(){
-    delete core;
-    SDL_DestroyTexture( texture );
-    SDL_DestroyRenderer( renderer );
-    SDL_DestroyWindow( window );
-    SDL_Quit();
 }
 
 void Window::Window::eventManager(){
@@ -122,21 +98,21 @@ void Window::Window::eventManager(){
                 }
                 //event text
                 if(e.key.type == SDL_KEYDOWN){
-                    if ( e.key.keysym.sym >= 'a' && e.key.keysym.sym <= 'z' || e.key.keysym.sym >= '0' && e.key.keysym.sym <= '9' ) {
-                        if( !ctrl_combination ){
+                    if( !ctrl_combination ){
+                        if ( e.key.keysym.sym >= 'a' && e.key.keysym.sym <= 'z' || e.key.keysym.sym >= '0' && e.key.keysym.sym <= '9' ) {
                             dinamicText->addCharacter( e.key.keysym.sym );
+                        }else if( e.key.keysym.sym == ' ' ){
+                            dinamicText->addCharacter( ' ' );
+                        }else if( e.key.keysym.sym == '.' ){
+                            dinamicText->addCharacter( '.' );
+                        }else if( e.key.keysym.sym == '-' ){
+                            dinamicText->addCharacter( '-' );
                         }
-                    }else if( e.key.keysym.sym == ' ' ){
-                        dinamicText->addCharacter( ' ' );
-                    }else if( e.key.keysym.sym == '.' ){
-                        dinamicText->addCharacter( '.' );
-                    }else if( e.key.keysym.sym == '-' ){
-                        dinamicText->addCharacter( '-' );
-                    }
-                    if( e.key.keysym.sym == SDLK_BACKSPACE ){
-                        dinamicText->removeLastCharacter();
-                    }else if( e.key.keysym.sym == SDLK_ESCAPE ){
-                        quit = true;
+                        if( e.key.keysym.sym == SDLK_BACKSPACE ){
+                            dinamicText->removeLastCharacter();
+                        }else if( e.key.keysym.sym == SDLK_ESCAPE ){
+                            quit = true;
+                        }
                     }
                     /*switch(e.key.keysym.sym){
                         case SDLK_w:
@@ -187,16 +163,6 @@ void Window::Window::eventManager(){
     }while( !quit );
 }
 
-void Window::Window::textInput() {
-    
-}
-
 Window::Window::~Window(){
-    close();
-}
-
-void Window::Window::prv() {
-    do {
-        printf("%d\n", slide);
-    }while( !quit );
+    delete core;
 }

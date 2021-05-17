@@ -1,23 +1,60 @@
 #include "phrase.h"
 
 Phrase::Phrase( const char* phrase, int x, int y, int width, int height, SDL_Renderer *renderer ) {
-	texture = new Texture( "img/sprites.png", renderer );
+	
+	dinamicTextDimension = true;
+	selection = all;
+
+	commonInitialization( phrase, x, y, width, height, renderer );
+
+}
+
+Phrase::Phrase( const char* phrase, int x, int y, int width, int height, int charDimension, SDL_Renderer* renderer ){
+	
+	dinamicTextDimension = false;
+	this->charDimension = charDimension;
+	selection = all;
+	
+	commonInitialization(phrase, x, y, width, height, renderer);
+}
+Phrase::Phrase( const char* phrase, int x, int y, int width, int height, enum INPUT_TYPE selection, SDL_Renderer* renderer ){
+
+	dinamicTextDimension = true;
+	this->selection = selection;
+
+	commonInitialization(phrase, x, y, width, height, renderer);
+}
+Phrase::Phrase( const char* phrase, int x, int y, int width, int height, int charDimension, enum INPUT_TYPE selection, SDL_Renderer* renderer ){
+
+	dinamicTextDimension = false;
+	this->charDimension = charDimension;
+	this->selection = selection;
+
+	commonInitialization(phrase, x, y, width, height, renderer);
+}
+
+void Phrase::commonInitialization( const char* phrase, int x, int y, int width, int height, SDL_Renderer* renderer ){
+
+	texture = new Texture("img/sprites.png", renderer);
 
 	this->x = x;
 	this->y = y;
 	this->width = width;
 	this->height = height;
-	phraseLenght = 0;
+	phraseLength = 0;
 
-	while (phrase[phraseLenght] != '\0') { phraseLenght++; }
+	while (phrase[phraseLength] != '\0') { phraseLength++; }
+	this->phrase = (char*)malloc( sizeof( char ) * (phraseLength+1));
+	this->phrase[phraseLength] = '\0';
 
-	posithions = (SDL_Rect*)malloc( sizeof(SDL_Rect) * (phraseLenght) );
-	tiles = (SDL_Rect*)malloc(sizeof(SDL_Rect) * (phraseLenght));
+	posithions = (SDL_Rect*)malloc(sizeof(SDL_Rect) * (phraseLength));
+	tiles = (SDL_Rect*)malloc(sizeof(SDL_Rect) * (phraseLength));
 
-	for (int i = 0; i < phraseLenght; i++ ) {
-		fromCharToImage( upperCase(phrase[i]), i );
+	for (int i = 0; i < phraseLength; i++) {
+		this->phrase[i] = phrase[i];
+		fromCharToImage(upperCase(phrase[i]), i);
 	}
-	if( phraseLenght > 0 ){
+	if (phraseLength > 0) {
 		posithioningChar();
 	}
 
@@ -68,19 +105,21 @@ void Phrase::fromCharToImage(char c, int positionIndex) {
 
 void Phrase::posithioningChar() {
 	
-	int charWidthDimension = width / phraseLenght;
-	int charHeightDimension = height / phraseLenght;
-	int charDimension = 0;
-	if( charWidthDimension < charHeightDimension ){
-		charDimension = charWidthDimension;
-	}else{
-		charDimension = charHeightDimension;
+	if( dinamicTextDimension ){
+		int charWidthDimension = width / phraseLength;
+		int charHeightDimension = height / phraseLength;
+		if (charWidthDimension < charHeightDimension) {
+			charDimension = charWidthDimension;
+		}
+		else {
+			charDimension = charHeightDimension;
+		}
 	}
 
 	int posX = x;
 	int posY = y;
 
-	for (int i = 0; i < phraseLenght; i++) {
+	for (int i = 0; i < phraseLength; i++) {
 		posithions[i].x = posX;
 		posithions[i].y = posY;
 		posithions[i].w = charDimension;
@@ -93,23 +132,34 @@ void Phrase::posithioningChar() {
 }
 
 void Phrase::addCharacter( const char c ){
-	phraseLenght++;
+	if( isAdmitted( upperCase(c) ) ){
+		phraseLength++;
+		char *newPhrase = (char*)malloc( sizeof( char ) * (phraseLength+1));
+		newPhrase[phraseLength] = '\0';
+		for( int i = 0; i < phraseLength - 1; i++ ){
+			newPhrase[i] = phrase[i];
+		}
+		newPhrase[phraseLength - 1] = c;
+		free(phrase);
+		phrase = newPhrase;
 	
-	tiles = (SDL_Rect*)realloc( tiles, (sizeof(SDL_Rect) * phraseLenght) );
-	posithions = (SDL_Rect*)realloc( posithions, (sizeof(SDL_Rect) * phraseLenght) );
+		tiles = (SDL_Rect*)realloc( tiles, (sizeof(SDL_Rect) * phraseLength) );
+		posithions = (SDL_Rect*)realloc( posithions, (sizeof(SDL_Rect) * phraseLength) );
 
-	fromCharToImage( upperCase( c ), phraseLenght-1 );
-	posithioningChar();
+		fromCharToImage( upperCase( c ), phraseLength-1 );
+		posithioningChar();
+	}
 }
 
 void Phrase::removeLastCharacter(){
-	if( phraseLenght > 0 ){
-		phraseLenght--;
+	if( phraseLength > 0 ){
+		phraseLength--;
+		phrase[phraseLength] = '\0';
 
-		SDL_Rect *new_posithions = (SDL_Rect*)malloc(sizeof(SDL_Rect) * (phraseLenght));
-		SDL_Rect *new_tiles = (SDL_Rect*)malloc(sizeof(SDL_Rect) * (phraseLenght));
+		SDL_Rect *new_posithions = (SDL_Rect*)malloc(sizeof(SDL_Rect) * (phraseLength));
+		SDL_Rect *new_tiles = (SDL_Rect*)malloc(sizeof(SDL_Rect) * (phraseLength));
 
-		for (int i = 0; i < phraseLenght; i++ ) {
+		for (int i = 0; i < phraseLength; i++ ) {
 			new_posithions[i].x = posithions[i].x;
 			new_posithions[i].y = posithions[i].y;
 			new_posithions[i].w = posithions[i].w;
@@ -126,14 +176,27 @@ void Phrase::removeLastCharacter(){
 		posithions = new_posithions;
 		tiles = new_tiles;
 
-		if( phraseLenght > 0 ){
+		if( phraseLength > 0 ){
 			posithioningChar();
 		}
 	}
 }
 
+bool Phrase::isAdmitted( char c ){
+	switch ( selection ){
+		case numbers_only:
+			if ( c >= '0' && c <= '9' ) { return true; }
+			return false;
+		case no_special_char:
+			if (c >= 'A' && c <= 'Z' || c >= '0' && c <= '9') { return true; }
+			return false;
+		default:
+			return true;
+	}
+}
+
 void Phrase::render( SDL_Renderer* renderer ) {
-	for (int i = 0; i < phraseLenght; i++) {
+	for (int i = 0; i < phraseLength; i++) {
 		texture->render( renderer, &tiles[i], &posithions[i] );
 	}
 }
@@ -143,4 +206,18 @@ char Phrase::upperCase( char c ){
 		return c - 32;
 	}
 	return c;
+}
+
+int Phrase::getPhraseLength() {
+	return phraseLength;
+}
+char* Phrase::getText() {
+	return phrase;
+}
+
+Phrase::~Phrase() {
+	delete texture;
+	free(phrase);
+	free(posithions);
+	free(tiles);
 }
