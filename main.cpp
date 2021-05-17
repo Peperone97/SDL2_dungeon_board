@@ -17,10 +17,11 @@ int main() {
 #include "errorWindow.h"
 
 int main( int argc, char **argv ){
+    int width = 800, height = 800;
 
     InputWindow::InputWindow* inputWindow;
     try {
-        inputWindow = new InputWindow::InputWindow("Input", 360, 200);
+        inputWindow = new InputWindow::InputWindow("Input", 369, 200);
     }
     catch (const char* c) {
         printf("%s\n", c);
@@ -31,7 +32,7 @@ int main( int argc, char **argv ){
     int numberOfTiles = inputWindow->getGridDimension();
     delete inputWindow;
 
-    if( numberOfTiles == 0 ){
+    if( numberOfTiles <= 32 || numberOfTiles > height ){
         ErrorWindow* err = new ErrorWindow("Error!", 300, 100);
         err->show();
         err->run();
@@ -40,7 +41,7 @@ int main( int argc, char **argv ){
 
     Window::Window *win;
     try{
-        win = new Window::Window( "Prove", 800, 800, numberOfTiles );
+        win = new Window::Window( "Prove", width, height, numberOfTiles );
     }catch( const char *c ){
         printf("%s\n", c);
         return 1;

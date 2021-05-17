@@ -60,6 +60,12 @@ void Phrase::commonInitialization( const char* phrase, int x, int y, int width, 
 
 }
 
+void Phrase::setPosition( int x, int y ){
+	this->x = x;
+	this->y = y;
+	posithioningChar();
+}
+
 void Phrase::fromCharToImage(char c, int positionIndex) {
 	if ( c == ' ' ) {
 		tiles[positionIndex].x = 0;

@@ -4,7 +4,7 @@ Window::Window::Window(const char* title, int width, int height, int numberOfTil
     slide = false;
     ctrl_combination = false;
 
-    core = new Core( width, height, height/numberOfTiles, renderer );
+    core = new Core( height, height, height/numberOfTiles, renderer );
 
     dinamicText = new Phrase("", 4, 100, 200, 200, renderer);
 

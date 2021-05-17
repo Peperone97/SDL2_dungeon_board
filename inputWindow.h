@@ -11,8 +11,9 @@
 #include <exception>
 #include <math.h>
 
-#include "phrase.h"
 #include "baseWindow.h"
+#include "phrase.h"
+#include "button.h"
 
 #ifndef INPUT_WINDOW
 #define INPUT_WINDOW
@@ -26,9 +27,10 @@ namespace InputWindow{
 
         int getGridDimension();
     private:
-        int gridDimension;
+        int gridDimension, charDimension;
 
         Phrase *dinamicText, *staticText;
+        Button *button;
 
         SDL_Thread *render_thread;
 

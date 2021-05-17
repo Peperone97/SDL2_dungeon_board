@@ -2,9 +2,11 @@
 
 InputWindow::InputWindow::InputWindow( const char* title, int width, int height ) : BaseWindow( title, width, height ){
 
-    int charDimension = (width - width * 5 / 100 * 2) / 21;
+    charDimension = (width - width * 5 / 100 * 2) / 21;
     staticText = new Phrase("Insert grid dimension", width*5/100, height*10/100, width - width*5/100, height, charDimension, renderer);
-    dinamicText = new Phrase("", width*30/100, height*30/100, width*40/100, height*40/100, charDimension, numbers_only, renderer);
+    dinamicText = new Phrase("", width/2, height*30/100, width*40/100, height*40/100, charDimension, numbers_only, renderer);
+
+    button = new Button( "Confirm", width/2 - (width*40/100)/2 , height - height*20/100 * 2, width*40/100, height*20/100, renderer );
     
 }
 
@@ -22,15 +24,17 @@ void InputWindow::InputWindow::run() {
 
 void InputWindow::InputWindow::render() {
     do {
-        SDL_RenderClear(renderer);
+        SDL_RenderClear( renderer );
 
-        staticText->render(renderer);
-        dinamicText->render(renderer);
+        staticText->render( renderer );
+        dinamicText->setPosition( width/2 - dinamicText->getPhraseLength()/2 * charDimension, height * 30 / 100 ); // set the dinami text at center
+        dinamicText->render( renderer );
+        button->render( renderer );
 
         SDL_RenderPresent(renderer);
 
-        SDL_Delay(SECOND / FPS);
-    } while (!quit);
+        SDL_Delay( SECOND / FPS );
+    } while ( !quit );
 }
 
 void InputWindow::InputWindow::eventManager() {
@@ -40,6 +44,15 @@ void InputWindow::InputWindow::eventManager() {
                 quit = true;
             }
             else {
+                if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT ){ //click on map
+                    //printf("Click\n");
+                    int x, y;
+                    SDL_GetMouseState( &x, &y );
+                    if( button->isClicked( x, y ) && dinamicText->getPhraseLength() > 0 ){
+                        parseInput();
+                        quit = true;
+                    }
+                }
                 //event text
                 if (e.key.type == SDL_KEYDOWN) {
                     if (e.key.keysym.sym >= 'a' && e.key.keysym.sym <= 'z' || e.key.keysym.sym >= '0' && e.key.keysym.sym <= '9') {
@@ -60,7 +73,7 @@ void InputWindow::InputWindow::eventManager() {
                     else if (e.key.keysym.sym == SDLK_ESCAPE) {
                         quit = true;
                     }
-                    else if (e.key.keysym.sym == SDLK_KP_ENTER || e.key.keysym.sym == SDLK_RETURN) {
+                    else if ((e.key.keysym.sym == SDLK_KP_ENTER || e.key.keysym.sym == SDLK_RETURN) && dinamicText->getPhraseLength() > 0) {
                         parseInput();
                         quit = true;
                     }
