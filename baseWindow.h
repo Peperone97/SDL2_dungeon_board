@@ -4,7 +4,7 @@
 #endif
 #ifdef unix
 	#include <SDL2/SDL.h>
-    #include <SDL2/DL_image.h>
+    #include <SDL2/SDL_image.h>
 #endif
 
 #ifndef BASE_WINDOW
