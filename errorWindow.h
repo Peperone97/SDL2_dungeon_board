@@ -15,14 +15,9 @@ class ErrorWindow : public BaseWindow{
 public:
 	ErrorWindow( const char* title, int width, int height );
 	~ErrorWindow();
-	void run();
 private:
 	Phrase *error;
-	SDL_Thread *render_thread;
 
-	static void render_wrapper(void* obj) {
-		static_cast<ErrorWindow*>(obj)->render();
-	}
 	void render();
 	void eventManager();
 };

@@ -14,6 +14,8 @@
 #include "baseWindow.h"
 #include "phrase.h"
 #include "button.h"
+#include "dropdownMenu.h"
+#include "cursor.h"
 
 #ifndef INPUT_WINDOW
 #define INPUT_WINDOW
@@ -23,7 +25,6 @@ namespace InputWindow{
     public:
         InputWindow( const char* title, int width, int height );
         ~InputWindow();
-        void run();
 
         int getGridDimension();
     private:
@@ -31,13 +32,11 @@ namespace InputWindow{
 
         Phrase *dinamicText, *staticText;
         Button *button;
+        DropdownMenu *menu;
+        Cursor *cursor;
 
-        SDL_Thread *render_thread;
-
-        static void render_wrapper(void* obj) {
-            static_cast<InputWindow*>(obj)->render();
-        }
         void render();
+        void update();
         
         void eventManager();
         void parseInput();

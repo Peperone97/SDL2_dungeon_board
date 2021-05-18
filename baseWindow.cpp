@@ -20,6 +20,18 @@ void BaseWindow::show() {
     SDL_ShowWindow(window);
 }
 
+void BaseWindow::run() {
+    quit = false;
+
+    update_thread = SDL_CreateThread((SDL_ThreadFunction)BaseWindow::update_wrapper, "update", this);
+    render_thread = SDL_CreateThread((SDL_ThreadFunction)BaseWindow::render_wrapper, "render", this);
+    do {
+
+        eventManager();
+
+    } while (!quit);
+}
+
 void BaseWindow::close() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

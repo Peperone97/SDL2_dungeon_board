@@ -2,6 +2,7 @@
 
 Button::Button( const char* text, int x, int y, int width, int height, SDL_Renderer *renderer ) {
 	texture = new Texture("img/sprites.png", renderer);
+	focused = false;
 
 	position.x = x;
 	position.y = y;
@@ -12,6 +13,16 @@ Button::Button( const char* text, int x, int y, int width, int height, SDL_Rende
 	tile.y = 110;
 	tile.w = 25;
 	tile.h = 12;
+
+	background_position.x = x;
+	background_position.y = y;
+	background_position.w = width;
+	background_position.h = height;
+
+	background_tile.x = 25;
+	background_tile.y = 110;
+	background_tile.w = 25;
+	background_tile.h = 12;
 
 	int l = stringLen( text );
 	int dim_x = width + x, dim_y = height + y;
@@ -29,9 +40,31 @@ bool Button::isClicked( int x, int y ){
 	return false;
 }
 
+void Button::isOnFocus(int x, int y){
+	if (x >= position.x && x <= position.x + position.w) {
+		if (y >= position.y && y <= position.y + position.h) {
+			focused = true;
+		}else{
+			focused = false;
+		}
+	}else{
+		focused = false;
+	}
+}
+
 void Button::render( SDL_Renderer *renderer ){
-	texture->render( renderer, &tile, &position );
+	texture->render(renderer, &tile, &position);
+	if( focused ){
+		texture->render(renderer, &background_tile, &background_position);
+		text->changeColor( 0,0,0 );
+	}else{
+		text->changeColor(255, 255, 255);
+	}
 	text->render( renderer );
+}
+
+char *Button::getText(){
+	return text->getText();
 }
 
 int Button::stringLen( const char *s ){

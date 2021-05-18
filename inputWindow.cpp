@@ -4,22 +4,16 @@ InputWindow::InputWindow::InputWindow( const char* title, int width, int height 
 
     charDimension = (width - width * 5 / 100 * 2) / 21;
     staticText = new Phrase("Insert grid dimension", width*5/100, height*10/100, width - width*5/100, height, charDimension, renderer);
-    dinamicText = new Phrase("", width/2, height*30/100, width*40/100, height*40/100, charDimension, numbers_only, renderer);
+    dinamicText = new Phrase("", width*60/100, height*33/100, width*40/100, height*40/100, charDimension, numbers_only, renderer);
+    cursor = new Cursor( width*60/100, height*33/100, charDimension, renderer );
 
     button = new Button( "Confirm", width/2 - (width*40/100)/2 , height - height*20/100 * 2, width*40/100, height*20/100, renderer );
+
+    menu = new DropdownMenu( 10, height*30/100, width*40/100, height*15/100, renderer );
+    menu->addEntry( "Dungeon", renderer );
+    menu->addEntry( "Home", renderer );
+    menu->setText( "Dungeon" );
     
-}
-
-void InputWindow::InputWindow::run() {
-    quit = false;
-
-    render_thread = SDL_CreateThread((SDL_ThreadFunction)InputWindow::render_wrapper, "render", this);
-
-    do {
-
-        eventManager();
-
-    } while (!quit);
 }
 
 void InputWindow::InputWindow::render() {
@@ -27,14 +21,26 @@ void InputWindow::InputWindow::render() {
         SDL_RenderClear( renderer );
 
         staticText->render( renderer );
-        dinamicText->setPosition( width/2 - dinamicText->getPhraseLength()/2 * charDimension, height * 30 / 100 ); // set the dinami text at center
         dinamicText->render( renderer );
-        button->render( renderer );
+        cursor->render();
+        
+        if( !menu->isActivate() ){
+            button->render(renderer);
+        }
+        menu->render( renderer );
 
         SDL_RenderPresent(renderer);
 
         SDL_Delay( SECOND / FPS );
     } while ( !quit );
+}
+
+void InputWindow::InputWindow::update(){
+    do {
+        cursor->update();
+        cursor->updatePosition( width*60/100 + dinamicText->getPhraseLength() * charDimension, height*33/100 );
+        SDL_Delay(1); //milliseconds
+    } while (!quit);
 }
 
 void InputWindow::InputWindow::eventManager() {
@@ -44,26 +50,34 @@ void InputWindow::InputWindow::eventManager() {
                 quit = true;
             }
             else {
-                if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT ){ //click on map
-                    //printf("Click\n");
+                if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT ){// click
                     int x, y;
                     SDL_GetMouseState( &x, &y );
-                    if( button->isClicked( x, y ) && dinamicText->getPhraseLength() > 0 ){
+                    menu->handleEvent(x, y, CLICK);
+                    if( button->isClicked( x, y ) && !menu->isActivate() && dinamicText->getPhraseLength() > 0  ){
                         parseInput();
                         quit = true;
                     }
                 }
+                if( e.type == SDL_MOUSEMOTION ){
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    button->isOnFocus( x, y );
+                    menu->handleEvent( x, y, MOTION );
+                }
                 //event text
                 if (e.key.type == SDL_KEYDOWN) {
-                    if (e.key.keysym.sym >= 'a' && e.key.keysym.sym <= 'z' || e.key.keysym.sym >= '0' && e.key.keysym.sym <= '9') {
-                        dinamicText->addCharacter(e.key.keysym.sym);
-                    }
-                    if (e.key.keysym.scancode >= 89 && e.key.keysym.scancode <= 98) { //keypad
-                        if (e.key.keysym.scancode == 98) {
-                            dinamicText->addCharacter('0');
+                    if( dinamicText->getPhraseLength() <= 3 ){
+                        if (e.key.keysym.sym >= 'a' && e.key.keysym.sym <= 'z' || e.key.keysym.sym >= '0' && e.key.keysym.sym <= '9') {
+                            dinamicText->addCharacter(e.key.keysym.sym);
                         }
-                        else { // 1 - 9
-                            dinamicText->addCharacter(e.key.keysym.scancode-40); // char 1 = int 49
+                        if (e.key.keysym.scancode >= 89 && e.key.keysym.scancode <= 98) { //keypad
+                            if (e.key.keysym.scancode == 98) {
+                                dinamicText->addCharacter('0');
+                            }
+                            else { // 1 - 9
+                                dinamicText->addCharacter(e.key.keysym.scancode-40); // char 1 = int 49
+                            }
                         }
                     }
                     if (e.key.keysym.sym == SDLK_BACKSPACE) {
@@ -102,4 +116,7 @@ int InputWindow::InputWindow::getGridDimension(){
 InputWindow::InputWindow::~InputWindow(){
     delete staticText;
     delete dinamicText;
+    delete button;
+    delete menu;
+    delete cursor;
 }

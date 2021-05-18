@@ -4,18 +4,6 @@ ErrorWindow::ErrorWindow( const char* title, int width, int height ) : BaseWindo
     error = new Phrase( "ERROR!", 10, 10, width, height, 50, renderer );
 }
 
-void ErrorWindow::run() {
-    quit = false;
-
-    render_thread = SDL_CreateThread((SDL_ThreadFunction)ErrorWindow::render_wrapper, "render", this);
-
-    do {
-
-        eventManager();
-
-    } while (!quit);
-}
-
 void ErrorWindow::render() {
     do {
         SDL_RenderClear(renderer);

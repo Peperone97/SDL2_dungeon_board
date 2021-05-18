@@ -3,25 +3,12 @@
 Window::Window::Window(const char* title, int width, int height, int numberOfTiles ) : BaseWindow( title, width, height ){
     slide = false;
     ctrl_combination = false;
+    draw = false;
 
     core = new Core( height, height, height/numberOfTiles, renderer );
 
     dinamicText = new Phrase("", 4, 100, 200, 200, renderer);
 
-}
-
-void Window::Window::run(){
-    quit = false;
-    slide = false;
-    draw = false;
-    
-    update_thread = SDL_CreateThread( (SDL_ThreadFunction)Window::update_wrapper, "update", this );
-    render_thread = SDL_CreateThread((SDL_ThreadFunction)Window::render_wrapper, "render", this);
-    do{
-
-        eventManager();
-
-    }while( !quit );
 }
 
 void Window::Window::render(){
@@ -165,4 +152,5 @@ void Window::Window::eventManager(){
 
 Window::Window::~Window(){
     delete core;
+    delete dinamicText;
 }

@@ -17,6 +17,10 @@ void Texture::render( SDL_Renderer *renderer, SDL_Rect *clip, SDL_Rect *destinat
     SDL_RenderCopy( renderer, texture, clip, destination );
 }
 
+void Texture::changeColor(uint8_t r, uint8_t g, uint8_t b){
+    SDL_SetTextureColorMod( texture, r, g, b );
+}
+
 Texture::~Texture(){
     SDL_DestroyTexture( texture );
 }

@@ -39,6 +39,7 @@ public:
 	void removeLastCharacter();
 	void render( SDL_Renderer *renderer );
 	void setPosition( int x, int y );
+	void changeColor( uint8_t r, uint8_t g, uint8_t b );
 
 	char *getText();
 	int getPhraseLength();

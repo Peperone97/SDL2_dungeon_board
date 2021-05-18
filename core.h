@@ -13,6 +13,7 @@
 #include "phrase.h"
 #include "texture.h"
 #include "entity.h"
+#include "monster.h"
 #include "map.h"
 
 #ifndef CORE

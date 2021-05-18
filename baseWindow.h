@@ -18,7 +18,7 @@ public:
 	BaseWindow( const char* title, int width, int height );
     ~BaseWindow();
     void show();
-
+    void run();
 protected:
     int width, height;
     bool quit;
@@ -26,8 +26,19 @@ protected:
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Event e;
+    SDL_Thread *update_thread, *render_thread;
 
-    //void eventManager();
+    static void render_wrapper(void* obj) {
+        static_cast<BaseWindow*>(obj)->render();
+    }
+    static void update_wrapper(void* obj) {
+        static_cast<BaseWindow*>(obj)->update();
+    }
+
+    virtual void render(){};
+    virtual void update(){};
+    virtual void eventManager(){};
+    
     void close();
 };
 

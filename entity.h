@@ -7,8 +7,8 @@
 //#include "SDL2/include/SDL.h"
 
 #include <cmath>
-#include "texture.h"
 
+#include "texture.h"
 #include "timer.h"
 
 #ifndef ENTITY
@@ -19,15 +19,13 @@ public:
     Entity( const char* path, SDL_Renderer *renderer );
     ~Entity();
     void addEntity( int dimension, int x, int y );
-    void render();
-    void update();
+    virtual void render(){};
+    virtual void update(){};
     void updateDimension( int newDimension );
     void updatePosition( int new_x, int new_y );
-private:
-    int sprite;
+protected:
     SDL_Renderer *renderer;
-    SDL_Rect *entity[2];
-    SDL_Rect *position;
+    SDL_Rect position, *tile;
     Texture *texture;
     Timer *timer;
 };

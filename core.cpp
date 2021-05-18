@@ -116,8 +116,9 @@ void Core::handleEvent( int x, int y ){
         if( entities[pos[0]][pos[1]] == nullptr ){
             int pos_x = destination[pos[0]][pos[1]].x + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
             int pos_y = destination[pos[0]][pos[1]].y + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
-            entities[pos[0]][pos[1]] = new Entity( "img/sprites.png", renderer );
-            entities[pos[0]][pos[1]]->addEntity( destination[0][0].w*3/4, pos_x, pos_y );
+            //entities[pos[0]][pos[1]] = new Entity( "img/sprites.png", renderer );
+            //entities[pos[0]][pos[1]]->addEntity( destination[0][0].w*3/4, pos_x, pos_y );
+            entities[pos[0]][pos[1]] = new Monster( pos_x, pos_y, destination[0][0].w * 3 / 4, renderer );
         }else{
             delete entities[pos[0]][pos[1]];
             entities[pos[0]][pos[1]] = nullptr;

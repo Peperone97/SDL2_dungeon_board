@@ -66,6 +66,10 @@ void Phrase::setPosition( int x, int y ){
 	posithioningChar();
 }
 
+void Phrase::changeColor( uint8_t r, uint8_t g, uint8_t b ){
+	texture->changeColor(r, g, b);
+}
+
 void Phrase::fromCharToImage(char c, int positionIndex) {
 	if ( c == ' ' ) {
 		tiles[positionIndex].x = 0;
