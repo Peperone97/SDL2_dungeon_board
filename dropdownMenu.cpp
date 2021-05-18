@@ -26,12 +26,16 @@ DropdownMenu::DropdownMenu( int x, int y, int width, int height, SDL_Renderer *r
 	arrow_tile.h = 14;
 
 	selection = new Phrase("", x+x*140/100, y+y*15/100, width, height*2, renderer);
-	
+
 }
 
 void DropdownMenu::addEntry( const char* entry, SDL_Renderer *renderer ){
-	n_entries++;
-	entries = (Button**)realloc( entries, sizeof(Button*) * n_entries );
+    n_entries++;
+    if( n_entries == 1 ){
+        entries = (Button**)malloc( sizeof(Button*) * n_entries );
+    }else{
+        entries = (Button**)realloc( entries, sizeof(Button*) * n_entries );
+    }
 	entries[n_entries-1] = new Button( entry, position.x, position.y+position.h*n_entries, position.w, position.h, renderer );
 }
 
