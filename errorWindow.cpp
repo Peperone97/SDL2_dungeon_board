@@ -6,18 +6,20 @@ ErrorWindow::ErrorWindow( const char* title, int width, int height ) : BaseWindo
 
 void ErrorWindow::render() {
     do {
+        SDL_LockMutex( lock );
+
         SDL_RenderClear(renderer);
-
         error->render( renderer );
-
         SDL_RenderPresent(renderer);
 
+        SDL_UnlockMutex( lock );
         SDL_Delay(SECOND / FPS);
     } while (!quit);
 }
 
 void ErrorWindow::eventManager() {
     do {
+        SDL_LockMutex( lock );
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 quit = true;
@@ -31,6 +33,7 @@ void ErrorWindow::eventManager() {
                 }
             }
         }
+        SDL_UnlockMutex( lock );
         SDL_Delay(1); //milliseconds
     } while (!quit);
 }

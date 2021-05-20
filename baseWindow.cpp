@@ -14,6 +14,8 @@ BaseWindow::BaseWindow( const char* title, int width, int height ){
     renderer = SDL_CreateRenderer(window, -1, 0);
     if (renderer == NULL) { throw "Can't init SDL renderer"; }
 
+    lock = SDL_CreateMutex();
+
 }
 
 void BaseWindow::show() {

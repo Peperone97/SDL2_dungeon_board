@@ -223,40 +223,38 @@ void Core::zoomIn( int x, int y ){
     free(pos);
     if( destination[pos_i][pos_j].w <= width/3 && destination[pos_i][pos_j].h <= height/3 ){
         int pos_x, pos_y;
-        int zoomRes = destination[0][0].w + tileDimesion;
 
         zoomLevel++;
-        do {
-            for (int i = 0; i < dim_i; i++) {
-                for (int j = 0; j < dim_j; j++) {
-                    destination[i][j].w += 1;
-                    destination[i][j].h += 1;
 
-                    if (destination[i][j].x < destination[pos_i][pos_j].x) { //go left
-                        destination[i][j].x = destination[pos_i][pos_j].x - destination[i][j].w * (pos_i - i);
-                    }
-                    else if (destination[i][j].x > destination[pos_i][pos_j].x) { //go right
-                        destination[i][j].x = destination[pos_i][pos_j].x + destination[i][j].w * (i - pos_i);
-                    }
+        for (int i = 0; i < dim_i; i++) {
+            for (int j = 0; j < dim_j; j++) {
+                destination[i][j].w += 5;
+                destination[i][j].h += 5;
 
-                    if (destination[i][j].y < destination[pos_i][pos_j].y) { //go up
-                        destination[i][j].y = destination[pos_i][pos_j].y - destination[i][j].h * (pos_j - j);
-                    }
-                    else if (destination[i][j].y > destination[pos_i][pos_j].y) { //go down
-                        destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
-                    }
+                if (destination[i][j].x < destination[pos_i][pos_j].x) { //go left
+                    destination[i][j].x = destination[pos_i][pos_j].x - destination[i][j].w * (pos_i - i);
+                }
+                else if (destination[i][j].x > destination[pos_i][pos_j].x) { //go right
+                    destination[i][j].x = destination[pos_i][pos_j].x + destination[i][j].w * (i - pos_i);
+                }
 
-                    //zoom in entity
-                    if (entities[i][j] != nullptr) {
-                        pos_x = destination[i][j].x + ((destination[i][j].w) - (destination[i][j].w * 3 / 4)) / 2;
-                        pos_y = destination[i][j].y + ((destination[i][j].h) - (destination[i][j].h * 3 / 4)) / 2;
-                        entities[i][j]->updateDimension(destination[i][j].w * 3 / 4);
-                        entities[i][j]->updatePosition(pos_x, pos_y);
-                    }
+                if (destination[i][j].y < destination[pos_i][pos_j].y) { //go up
+                    destination[i][j].y = destination[pos_i][pos_j].y - destination[i][j].h * (pos_j - j);
+                }
+                else if (destination[i][j].y > destination[pos_i][pos_j].y) { //go down
+                    destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
+                }
+
+                //zoom in entity
+                if (entities[i][j] != nullptr) {
+                    pos_x = destination[i][j].x + ((destination[i][j].w) - (destination[i][j].w * 3 / 4)) / 2;
+                    pos_y = destination[i][j].y + ((destination[i][j].h) - (destination[i][j].h * 3 / 4)) / 2;
+                    entities[i][j]->updateDimension(destination[i][j].w * 3 / 4);
+                    entities[i][j]->updatePosition(pos_x, pos_y);
                 }
             }
-            SDL_Delay(5);
-        } while( destination[0][0].w != zoomRes );
+        }
+
         updateVisiblesIndex();
     }
 }
@@ -271,39 +269,35 @@ void Core::zoomOut( int x, int y ){
         int pos_j = pos[1];
         free(pos);
 
-        int zoomRes = destination[0][0].w - tileDimesion;
+        for (int i = 0; i < dim_i; i++) {
+            for (int j = 0; j < dim_j; j++) {
+                destination[i][j].w -= 5;
+                destination[i][j].h -= 5;
 
-        do {
-            for (int i = 0; i < dim_i; i++) {
-                for (int j = 0; j < dim_j; j++) {
-                    destination[i][j].w -= 1;
-                    destination[i][j].h -= 1;
+                if (destination[i][j].x < destination[pos_i][pos_j].x) { //dezoom left
+                    destination[i][j].x = destination[pos_i][pos_j].x - destination[i][j].w * (pos_i - i);
+                }
+                else if (destination[i][j].x > destination[pos_i][pos_j].x) {  //dezoom right
+                    destination[i][j].x = destination[pos_i][pos_j].x + destination[i][j].w * (i - pos_i);
+                }
 
-                    if (destination[i][j].x < destination[pos_i][pos_j].x) { //dezoom left
-                        destination[i][j].x = destination[pos_i][pos_j].x - destination[i][j].w * (pos_i - i);
-                    }
-                    else if (destination[i][j].x > destination[pos_i][pos_j].x) {  //dezoom right
-                        destination[i][j].x = destination[pos_i][pos_j].x + destination[i][j].w * (i - pos_i);
-                    }
+                if (destination[i][j].y < destination[pos_i][pos_j].y) { //dezoom up
+                    destination[i][j].y = destination[pos_i][pos_j].y - destination[i][j].h * (pos_j - j);
+                }
+                else if (destination[i][j].y > destination[pos_i][pos_j].y) { //dezoom down
+                    destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
+                }
 
-                    if (destination[i][j].y < destination[pos_i][pos_j].y) { //dezoom up
-                        destination[i][j].y = destination[pos_i][pos_j].y - destination[i][j].h * (pos_j - j);
-                    }
-                    else if (destination[i][j].y > destination[pos_i][pos_j].y) { //dezoom down
-                        destination[i][j].y = destination[pos_i][pos_j].y + destination[i][j].h * (j - pos_j);
-                    }
-
-                    //zoom out entity
-                    if (entities[i][j] != nullptr) {
-                        pos_x = destination[i][j].x + ((destination[i][j].w) - (destination[i][j].w * 3 / 4)) / 2;
-                        pos_y = destination[i][j].y + ((destination[i][j].h) - (destination[i][j].h * 3 / 4)) / 2;
-                        entities[i][j]->updateDimension(destination[i][j].w * 3 / 4);
-                        entities[i][j]->updatePosition(pos_x, pos_y);
-                    }
+                //zoom out entity
+                if (entities[i][j] != nullptr) {
+                    pos_x = destination[i][j].x + ((destination[i][j].w) - (destination[i][j].w * 3 / 4)) / 2;
+                    pos_y = destination[i][j].y + ((destination[i][j].h) - (destination[i][j].h * 3 / 4)) / 2;
+                    entities[i][j]->updateDimension(destination[i][j].w * 3 / 4);
+                    entities[i][j]->updatePosition(pos_x, pos_y);
                 }
             }
-            SDL_Delay(5);
-        }while(destination[0][0].w != zoomRes);
+        }
+
         zoomLevel--;
 
         //the tiles are bad positioned? Fix it

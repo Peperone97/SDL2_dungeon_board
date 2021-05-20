@@ -11,9 +11,13 @@ Window::Window::Window(const char* title, int width, int height, int numberOfTil
 
 void Window::Window::render(){
     do {
+        SDL_LockMutex( lock );
+
         SDL_RenderClear(renderer);
         core->render();
         SDL_RenderPresent(renderer);
+
+        SDL_UnlockMutex( lock );
 
         SDL_Delay(SECOND / FPS);
     }while( !quit );
@@ -22,20 +26,23 @@ void Window::Window::render(){
 void Window::Window::update(){
     int new_x, new_y;
     do{
+        SDL_LockMutex( lock );
         if( slide ){
             SDL_GetMouseState( &new_x, &new_y );
             core->moveMap( new_x - previous_x, new_y - previous_y );
             previous_x = new_x;
             previous_y = new_y;
         }
-
         core->update();
+
+        SDL_UnlockMutex( lock );
         SDL_Delay( 1 ); //milliseconds
     }while( !quit );
 }
 
 void Window::Window::eventManager(){
     do{
+        SDL_LockMutex( lock );
         while( SDL_PollEvent( &e ) != 0){
             if( e.type == SDL_QUIT ){
                 //printf("Quit\n");
@@ -125,6 +132,8 @@ void Window::Window::eventManager(){
                 }
             }
         }
+        SDL_UnlockMutex( lock );
+
         SDL_Delay( 1 ); //milliseconds
     }while( !quit );
 }

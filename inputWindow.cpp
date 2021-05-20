@@ -18,6 +18,8 @@ InputWindow::InputWindow::InputWindow( const char* title, int width, int height 
 
 void InputWindow::InputWindow::render() {
     do {
+        SDL_LockMutex( lock );
+
         SDL_RenderClear( renderer );
 
         staticText->render( renderer );
@@ -31,20 +33,26 @@ void InputWindow::InputWindow::render() {
 
         SDL_RenderPresent(renderer);
 
+        SDL_UnlockMutex( lock );
         SDL_Delay( SECOND / FPS );
     } while ( !quit );
 }
 
 void InputWindow::InputWindow::update(){
     do {
+        SDL_LockMutex( lock );
+
         cursor->update();
         cursor->updatePosition( width*60/100 + dinamicText->getPhraseLength() * charDimension, height*33/100 );
+
+        SDL_UnlockMutex( lock );
         SDL_Delay(1); //milliseconds
     } while (!quit);
 }
 
 void InputWindow::InputWindow::eventManager() {
     do {
+        SDL_LockMutex( lock );
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 quit = true;
@@ -93,6 +101,7 @@ void InputWindow::InputWindow::eventManager() {
                 }
             }
         }
+        SDL_UnlockMutex( lock );
         SDL_Delay(1); //milliseconds
     } while (!quit);
 }

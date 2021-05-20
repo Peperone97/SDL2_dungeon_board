@@ -10,7 +10,7 @@
 #ifndef BASE_WINDOW
 #define BASE_WINDOW
 
-#define FPS 30
+#define FPS 60
 #define SECOND 1000
 
 class BaseWindow {
@@ -27,6 +27,7 @@ protected:
     SDL_Renderer* renderer;
     SDL_Event e;
     SDL_Thread *update_thread, *render_thread;
+    SDL_mutex *lock;
 
     static void render_wrapper(void* obj) {
         static_cast<BaseWindow*>(obj)->render();
