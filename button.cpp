@@ -31,12 +31,19 @@ Button::Button( const char* text, int x, int y, int width, int height, SDL_Rende
 }
 
 bool Button::isClicked( int x, int y ){
-	if( x >= position.x && x <= position.x + position.w ){
-		if( y >= position.y && y <= position.y + position.h ){
+	printf("x: %d, y: %d\n", position.x, position.y);
+	printf("X: %d <= %d <= %d\n", position.x, x, position.x + position.w);
+	printf("Y: %d <= %d <= %d\n", position.y, y, position.y + position.h);
+	if (x >= position.x && x <= position.x + position.w) {
+		printf("X ok\n");
+		if (y >= position.y && y <= position.y + position.h) {
+			printf("Y ok\n");
 			return true;
 		}
+		printf("\n");
 		return false;
 	}
+	printf("\n");
 	return false;
 }
 

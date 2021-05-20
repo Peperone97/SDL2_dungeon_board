@@ -33,7 +33,6 @@ namespace Window{
         SDL_Event e;
 
         Core *core;
-        Phrase *dinamicText;
 
         void render();
         void update();

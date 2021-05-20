@@ -8,6 +8,7 @@ Core::Core( int width, int height, int tileDimension, SDL_Renderer *renderer ){
     zoomLevel = 0;
     dim_i = width/tileDimension;
     dim_j = width/tileDimension;
+    movement = false;
     //random
     time_t t;
     srand(time(&t));
@@ -75,6 +76,12 @@ Core::Core( int width, int height, int tileDimension, SDL_Renderer *renderer ){
 
     texture = new Texture( "img/sprites.png", renderer );
 
+    for( int i = 0; i < 4; i++ ){
+        for( int j = 0; j < 2; j++ ){
+            posOfArrows[i][j] = -1;
+        }
+    }
+
 }
 
 void Core::render(){
@@ -111,17 +118,73 @@ void Core::handleEvent( int x, int y ){
     //pos[0] is the x value, pos[1] is the y
     int *pos = pointOfClick(x, y); // find the tile where click is append
 
-    if( map[pos[0]][pos[1]] ){
-        //printf("%d, %d\n", pos[0], pos[1]);
-        if( entities[pos[0]][pos[1]] == nullptr ){
+    if( map[pos[0]][pos[1]] ){ //is a tile? 
+        if( entities[pos[0]][pos[1]] == nullptr && !movement ){
             int pos_x = destination[pos[0]][pos[1]].x + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
             int pos_y = destination[pos[0]][pos[1]].y + ((destination[0][0].w)-(destination[0][0].w*3/4))/2;
-            //entities[pos[0]][pos[1]] = new Entity( "img/sprites.png", renderer );
-            //entities[pos[0]][pos[1]]->addEntity( destination[0][0].w*3/4, pos_x, pos_y );
             entities[pos[0]][pos[1]] = new Monster( pos_x, pos_y, destination[0][0].w * 3 / 4, renderer );
-        }else{
-            delete entities[pos[0]][pos[1]];
-            entities[pos[0]][pos[1]] = nullptr;
+        }else{//movment option
+            if( !movement ){ //the entity can move only in a free tile
+                entityToMove[0] = pos[0];
+                entityToMove[1] = pos[1];
+                if( entities[pos[0]-1][pos[1]] == nullptr ){
+                    int pos_x = destination[pos[0]-1][pos[1]].x + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    int pos_y = destination[pos[0]-1][pos[1]].y + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    posOfArrows[0][0] = pos[0]-1;
+                    posOfArrows[0][1] = pos[1];
+                    entities[pos[0]-1][pos[1]] = new MovementArrow( pos_x, pos_y, destination[0][0].w * 3 / 4, RIGHT, renderer );
+                }
+                if( entities[pos[0]+1][pos[1]] == nullptr ){
+                    int pos_x = destination[pos[0]+1][pos[1]].x + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    int pos_y = destination[pos[0]+1][pos[1]].y + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    posOfArrows[1][0] = pos[0]+1;
+                    posOfArrows[1][1] = pos[1];
+                    entities[pos[0]+1][pos[1]] = new MovementArrow( pos_x, pos_y, destination[0][0].w * 3 / 4, LEFT, renderer );
+                }
+                if( entities[pos[0]][pos[1]-1] == nullptr ){
+                    int pos_x = destination[pos[0]][pos[1]-1].x + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    int pos_y = destination[pos[0]][pos[1]-1].y + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    posOfArrows[2][0] = pos[0];
+                    posOfArrows[2][1] = pos[1]-1;
+                    entities[pos[0]][pos[1]-1] = new MovementArrow( pos_x, pos_y, destination[0][0].w*3/4, UP, renderer );
+                }
+                if( entities[pos[0]][pos[1]+1] == nullptr ){
+                    int pos_x = destination[pos[0]][pos[1]+1].x + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    int pos_y = destination[pos[0]][pos[1]+1].y + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    posOfArrows[3][0] = pos[0];
+                    posOfArrows[3][1] = pos[1]+1;
+                    entities[pos[0]][pos[1]+1] = new MovementArrow( pos_x, pos_y, destination[0][0].w*3/4, DOWN, renderer );
+                }
+                movement = true;
+            }else{
+                bool move = false;
+                for( int i = 0; i < 4; i++ ){
+                    if( posOfArrows[i][0] == pos[0] && posOfArrows[i][1] == pos[1] ){ //the click is on an arrow?
+                        move = true;
+                    }
+                }
+
+                for( int i = 0; i < 4; i++ ){ //delete all arrows
+                    if( posOfArrows[i][0] != -1 ){
+                        delete entities[posOfArrows[i][0]][posOfArrows[i][1]];
+                        entities[posOfArrows[i][0]][posOfArrows[i][1]] = nullptr;
+                    }
+                }
+                for( int i = 0; i < 4; i++ ){ //delete all arrow positions
+                    for( int j = 0; j < 2; j++ ){
+                        posOfArrows[i][j] = -1;
+                    }
+                }
+
+                if( move ){
+                    int pos_x = destination[pos[0]][pos[1]].x + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    int pos_y = destination[pos[0]][pos[1]].y + ((destination[0][0].w) - (destination[0][0].w * 3 / 4)) / 2;
+                    entities[pos[0]][pos[1]] = new Monster(pos_x, pos_y, destination[0][0].w * 3 / 4, renderer);
+                    delete entities[entityToMove[0]][entityToMove[1]];
+                    entities[entityToMove[0]][entityToMove[1]] = nullptr;
+                }
+                movement = false;
+            }
         }
     }
 
@@ -395,6 +458,7 @@ Core::~Core(){
     free(entities);
     free(typeOfTile);
     free(map);
+    free(text);
     for( int i = 0; i < 4; i++ ){
         free(tiles[i]);
     }

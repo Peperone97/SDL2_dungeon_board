@@ -33,7 +33,7 @@ private:
 	int n_entries;
 	Phrase *selection;
 	Button **entries;
-	Texture *texture;
+	Texture *texture, *arrowTexture;;
 
 };
 

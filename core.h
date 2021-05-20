@@ -15,6 +15,7 @@
 #include "entity.h"
 #include "monster.h"
 #include "map.h"
+#include "movementArrow.h"
 
 #ifndef CORE
 #define CORE
@@ -40,6 +41,10 @@ private:
     SDL_Rect *tiles[4];
     Texture *texture;
     Phrase *text;
+    bool movement;
+    int entityToMove[2];
+    int nOfArrows;
+    int posOfArrows[4][2];
     //render cordinates
     int render_first_index_x, render_first_index_y, render_last_index_x, render_last_index_y;
     

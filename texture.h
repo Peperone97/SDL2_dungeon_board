@@ -20,7 +20,10 @@ public:
     void changeColor( uint8_t r, uint8_t g, uint8_t b );
     int getWidth();
     int getHeight();
+    void rotate( double angle );
 private:
+    bool rotation;
+    double angle;
     SDL_Texture *texture;
 };
 

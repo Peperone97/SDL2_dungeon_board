@@ -2,6 +2,7 @@
 
 DropdownMenu::DropdownMenu( int x, int y, int width, int height, SDL_Renderer *renderer ){
 	texture = new Texture("img/sprites.png", renderer);
+	arrowTexture = new Texture("img/sprites.png", renderer);
 	activate = false;
 
 	position.x = x;
@@ -44,9 +45,15 @@ void DropdownMenu::handleEvent( int x, int y, enum Event e ){
 		if( x >= arrow_position.x && x <= arrow_position.x + arrow_position.w ){
 			if( y >= arrow_position.y && y <= arrow_position.y + arrow_position.h ){
 				activate = !activate;
+				if( activate ){
+					arrowTexture->rotate(180);
+				}else{
+					arrowTexture->rotate(0);
+				}
 			}
 		}else{
 			for (int i = 0; i < n_entries; i++) {
+				printf("Button: %i");
 				if( entries[i]->isClicked( x, y ) ){
 					setText( entries[i]->getText() );
 				}
@@ -75,7 +82,7 @@ void DropdownMenu::setText( const char *text ) {
 
 void DropdownMenu::render(SDL_Renderer* renderer) {
 	texture->render(renderer, &tile, &position);
-	texture->render(renderer, &arrow_tile, &arrow_position);
+	arrowTexture->render(renderer, &arrow_tile, &arrow_position);
 	selection->render(renderer);
 	if(activate){
 		for( int i = 0; i < n_entries; i++ ){

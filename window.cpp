@@ -7,15 +7,12 @@ Window::Window::Window(const char* title, int width, int height, int numberOfTil
 
     core = new Core( height, height, height/numberOfTiles, renderer );
 
-    dinamicText = new Phrase("", 4, 100, 200, 200, renderer);
-
 }
 
 void Window::Window::render(){
     do {
         SDL_RenderClear(renderer);
         core->render();
-        dinamicText->render( renderer );
         SDL_RenderPresent(renderer);
 
         SDL_Delay(SECOND / FPS);
@@ -66,9 +63,11 @@ void Window::Window::eventManager(){
                 if( e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_RIGHT){ //start slide
                     SDL_GetMouseState( &previous_x, &previous_y );
                     slide = true;
+                    draw = true;
                 }
                 if( e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_RIGHT){ //stop slide
                     slide = false;
+                    draw = true;
                 }
                 //create a new dungeon ctrl+n
                 if( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LCTRL ){
@@ -85,23 +84,7 @@ void Window::Window::eventManager(){
                 }
                 //event text
                 if(e.key.type == SDL_KEYDOWN){
-                    if( !ctrl_combination ){
-                        if ( e.key.keysym.sym >= 'a' && e.key.keysym.sym <= 'z' || e.key.keysym.sym >= '0' && e.key.keysym.sym <= '9' ) {
-                            dinamicText->addCharacter( e.key.keysym.sym );
-                        }else if( e.key.keysym.sym == ' ' ){
-                            dinamicText->addCharacter( ' ' );
-                        }else if( e.key.keysym.sym == '.' ){
-                            dinamicText->addCharacter( '.' );
-                        }else if( e.key.keysym.sym == '-' ){
-                            dinamicText->addCharacter( '-' );
-                        }
-                        if( e.key.keysym.sym == SDLK_BACKSPACE ){
-                            dinamicText->removeLastCharacter();
-                        }else if( e.key.keysym.sym == SDLK_ESCAPE ){
-                            quit = true;
-                        }
-                    }
-                    /*switch(e.key.keysym.sym){
+                    switch(e.key.keysym.sym){
                         case SDLK_w:
                             //update();
                             printf("W\n");
@@ -135,14 +118,10 @@ void Window::Window::eventManager(){
                             printf("Space\n");
                             //SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
                         break;
-                        case SDLK_BACKSPACE:
-                            printf("Remove\n");
-                            dinamicText->removeLastCharacter();
-                        break;
                         case SDLK_ESCAPE:
                             printf("Exit\n");
                             quit = true;
-                    }*/
+                    }
                 }
             }
         }
@@ -152,5 +131,4 @@ void Window::Window::eventManager(){
 
 Window::Window::~Window(){
     delete core;
-    delete dinamicText;
 }
