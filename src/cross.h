@@ -1,9 +1,4 @@
-#ifdef _WIN32
-    #include "SDL2\include\SDL2\SDL.h"
-#endif
-#ifdef unix
-    #include <SDL2/SDL.h>
-#endif
+#include "SDL2/include/SDL2/SDL.h"
 
 #include "entity.h"
 

@@ -1,9 +1,5 @@
-#ifdef _WIN32
-	#include "SDL2\include\SDL2\SDL.h"
-#endif
-#ifdef unix
-	#include <SDL2/SDL.h>
-#endif
+#include "SDL2/include/SDL2/SDL.h"
+#include "SDL2/include/SDL2/SDL_image.h"
 
 #include "baseWindow.h"
 #include "phrase.h"
