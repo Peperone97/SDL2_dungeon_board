@@ -2,9 +2,9 @@
 A dungeon board simulator 
 
 What do you need for compile it
-Windows:
+* Windows:
   - mingw-x86_64
-Linux:
+* Linux:
   - gnu make
   - gnu g++
   Debian based:
