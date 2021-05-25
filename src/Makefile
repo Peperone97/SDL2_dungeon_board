@@ -1,5 +1,5 @@
 CC=g++
-OBJ=main.o baseWindow.o inputWindow.o errorWindow.o window.o texture.o entity.o core.o timer.o map.o phrase.o button.o dropdownMenu.o cursor.o monster.o movementArrow.o #new_core.o
+OBJ=main.o baseWindow.o inputWindow.o errorWindow.o window.o texture.o entity.o core.o timer.o map.o phrase.o button.o dropdownMenu.o cursor.o monster.o movementArrow.o cross.o
 LIBS=`pkg-config --libs --cflags sdl2` -lSDL2_image
 RES=program
 
@@ -24,6 +24,7 @@ dropdownMenu.o: dropdownMenu.cpp dropdownMenu.h button.h phrase.h cursor.h entit
 cursor.o: cursor.cpp cursor.h entity.h
 monster.o: monster.cpp monster.h entity.h
 movementArrow.o: movementArrow.cpp movementArrow.h entity.h
+cross.o: cross.cpp cross.h entity.h
 
 clean:
 	rm *.o $(RES)
